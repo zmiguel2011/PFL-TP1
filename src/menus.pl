@@ -5,24 +5,22 @@ mainMenu :-
     manageInput(Input).
 
 manageInput(1) :-
-    startGame('P','P'),
-    mainMenu.
+    startGame('P','P').
 
 manageInput(2) :-
-    startGame('P','C'),
-    mainMenu.
+    startGame('P','C').
 
 manageInput(3) :-
-    startGame('C','C'),
-    mainMenu.
-
-manageInput(4) :-
-    write('valid option!\n\n').
-
+    startGame('C','C').
+    
 manageInput(0) :-
     write('\nExiting...\n\n').
-
-manageInput(_Other) :-
+/**
+ * manageInput(+_Option)
+ * 
+ * Manages the input received. 
+ */
+manageInput(_Option) :-
     write('\nERROR: that option does not exist.\n\n'),
     askMenuOption,
     read(Input),
