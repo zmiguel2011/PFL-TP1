@@ -1,17 +1,17 @@
 initialBoard([
-[greenGoal,empty,empty,empty,empty],
+[greenGoal,empty,empty,empty,inaccessible],
 [empty,empty,empty,empty,empty],
 [empty,empty,empty,empty,empty],
 [empty,empty,empty,empty,empty],
-[empty,empty,empty,empty,blueGoal]
+[inaccessible,empty,empty,empty,blueGoal]
 ]).
 
 symbol(greenGoal,S) :- S='G'.
 symbol(blueGoal,S) :- S='B'.
 symbol(empty,S) :- S='.'.
-symbol(blue,S) :- S='X'.
-symbol(green,S) :- S='O'.
-symbol(brown,S) :- S='-'.
+symbol(blue,S) :- S='b'.
+symbol(green,S) :- S='g'.
+symbol(inaccessible,S) :- S='-'.
 
 letter(1, L) :- L='A'.
 letter(2, L) :- L='B'.
