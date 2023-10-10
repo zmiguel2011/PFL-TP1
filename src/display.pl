@@ -1,9 +1,9 @@
 initialBoard([
-[greenGoal,empty,empty,empty,inaccessible],
-[empty,empty,empty,empty,empty],
-[empty,empty,empty,empty,empty],
-[empty,empty,empty,empty,empty],
-[inaccessible,empty,empty,empty,blueGoal]
+[greenGoal,blue,blue,empty,inaccessible],
+[blue,empty,empty,empty,empty],
+[blue,empty,empty,empty,green],
+[empty,empty,empty,empty,green],
+[inaccessible,empty,green,green,blueGoal]
 ]).
 
 symbol(greenGoal,S) :- S='G'.
