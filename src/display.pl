@@ -1,3 +1,4 @@
+/**
 initialBoard([
 [greenGoal,blue,blue,empty,inaccessible],
 [blue,empty,empty,empty,empty],
@@ -5,6 +6,8 @@ initialBoard([
 [empty,empty,empty,empty,green],
 [inaccessible,empty,green,green,blueGoal]
 ]).
+
+*/
 
 symbol(greenGoal,S) :- S='G'.
 symbol(blueGoal,S) :- S='B'.
@@ -24,11 +27,11 @@ letter(5, L) :- L='E'.
  * 
  * Prints the board. 
  */
-printBoard(List) :-
+printBoard(gamestate(Board, 1)) :-
     nl,
     write('   | 1 | 2 | 3 | 4 | 5 |\n'),
     write('---|---|---|---|---|---|\n'),
-    printMatrix(List, 1).
+    printMatrix(Board, 1).
 
 printMatrix([], 6). % Base Case -> N is 6.
 /**

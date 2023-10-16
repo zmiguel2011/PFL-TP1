@@ -9,11 +9,11 @@ askCoords(Board, Expected):-
       manageRow(Row),
       manageColumn(Col),
       write('\n'),
-      format('Your coords : (~d, ~d)~n',[Row, Col]).
+      format('Your coords : (~d, ~d)~n',[Row, Col]),
       checkCell(Board,Row,Col,Expected),
       write('IT IS DESIRED PIECE\n').
 
 startGame(Player1, Player2):-
-      initialBoard(InitialBoard),
-      printBoard(InitialBoard),
+      initial(InitialState),
+      printBoard(InitialState),
       askCoords(InitialBoard, 'green').
