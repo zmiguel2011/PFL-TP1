@@ -1,4 +1,5 @@
 mainMenu :-
+    write('Change main menu\n'),
     printMainMenu,
     askMenuOption,
     read(Input),

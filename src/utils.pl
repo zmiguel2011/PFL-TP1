@@ -13,3 +13,9 @@ getValueFromMatrix([_H|T], Row, Column, Value) :-
         Row > 0,
         Row1 is Row - 1,
         getValueFromMatrix(T, Row1, Column, Value).
+
+ignore_newlines :-
+    repeat,
+    peek_char(Char),  % Peek at the next character without consuming it
+    ((Char == '\n', get_char(_)) ; (Char == end_of_file ; Char \= '\n')),
+    !.
