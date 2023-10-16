@@ -1,18 +1,29 @@
 mainMenu :-
-    write('Change main menu\n'),
     printMainMenu,
     askMenuOption,
     read(Input),
     manageInput(Input).
 
 manageInput(1) :-
-    startGame('P','P').
+    repeat,
+    askBoardSize,
+    read(Size),
+    validateSize(Size),
+    startGame('P','P', Size), !.
 
 manageInput(2) :-
-    startGame('P','C').
+    repeat,
+    askBoardSize,
+    read(Size),
+    validateSize(Size),
+    startGame('P','C', Size), !.
 
 manageInput(3) :-
-    startGame('C','C').
+    repeat,
+    askBoardSize,
+    read(Size),
+    validateSize(Size),
+    startGame('C','C', Size), !.
     
 manageInput(0) :-
     write('\nExiting...\n\n').
@@ -26,6 +37,13 @@ manageInput(_Option) :-
     askMenuOption,
     read(Input),
     manageInput(Input).
+
+/**
+ * validateSize(+Size)
+ * 
+ * Validadates the size received. 
+ */
+validateSize(Size):- Size >= 5, Size =< 10.
 
 printMainMenu :-
     nl,nl,
@@ -67,4 +85,9 @@ printMainMenu :-
 
 
 askMenuOption :-
-    write('> Choose an option ').
+    write('> Choose an option: ').
+
+
+askBoardSize :-
+    write('\n Please input the desired board size for the game. The size must be an integer between 5 and 10. (eg. 5, default is 5x5)\n'),
+    write('  > Size: ').

@@ -13,7 +13,7 @@ askCoords(Board, Expected):-
       checkCell(Board,Row,Col,Expected),
       write('IT IS DESIRED PIECE\n').
 
-startGame(Player1, Player2):-
-      initial(InitialState),
-      printBoard(InitialState),
+startGame(Player1, Player2, Size):-
+      initial_state(Size, InitialState),
+      display_game(Size, InitialState),
       askCoords(InitialBoard, 'green').

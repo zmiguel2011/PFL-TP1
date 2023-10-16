@@ -21,33 +21,61 @@ letter(2, L) :- L='B'.
 letter(3, L) :- L='C'.
 letter(4, L) :- L='D'.
 letter(5, L) :- L='E'.
+letter(6, L) :- L='F'.
+letter(7, L) :- L='G'.
+letter(8, L) :- L='H'.
+letter(9, L) :- L='I'.
+letter(10, L) :- L='J'.
+
 
 /**
- * printBoard(+List, N)
+ * display_game(+Size, +gamestate)
  * 
  * Prints the board. 
  */
-printBoard(gamestate(Board, 1)) :-
+display_game(Size, gamestate(Board, 1)) :-
     nl,
-    write('   | 1 | 2 | 3 | 4 | 5 |\n'),
-    write('---|---|---|---|---|---|\n'),
-    printMatrix(Board, 1).
+    Nmax is Size+1,
+    printHeader(Nmax),
+    printMatrix(Board, 1, Nmax).
 
-printMatrix([], 6). % Base Case -> N is 6.
+printHeader(Nmax):-
+    write('   |'),
+    printHeader1(Nmax, 1), nl,
+    printDivider(Nmax, 0), nl.
+
+printHeader1(Nmax, Nmax). % Base Case -> Nmax == N.
+printHeader1(Nmax, N):-
+    Nmax > N,
+    write(' '),
+    write(N),
+    write(' |'),
+    N1 is N+1,
+    printHeader1(Nmax, N1).
+
+printDivider(Nmax, Nmax). % Base Case -> Nmax == N.
+printDivider(Nmax, N):-
+    Nmax > N,
+    write('---|'),
+    N1 is N+1,
+    printDivider(Nmax, N1).
+
+
+printMatrix([], Nmax, Nmax). % Base Case -> N == Nmax=Size+1.
 /**
- * printMatrix(+List, N)
+ * printMatrix(+List, N, Nmax)
  * 
  * Prints a matrix with N cells of length. 
  */
-printMatrix([Head|Tail], N) :-
+printMatrix([Head|Tail], N, Nmax) :-
     letter(N, L),
     write(' '),
     write(L),
     N1 is N + 1,
     write(' | '),
     printRow(Head),
-    write('\n---|---|---|---|---|---|\n'),
-    printMatrix(Tail, N1).
+    nl, printDivider(Nmax, 0), nl,
+    printMatrix(Tail, N1, Nmax).
 
 printRow([]).  % Base Case
 /**

@@ -12,6 +12,7 @@ manageColumn(NewColumn) :-
 
 % Predicate to read the row input as char
 readRow(Code) :-
+    nl,
     write('  > Row    '),
     ignore_newlines,
     get_char(Char),
@@ -20,6 +21,7 @@ readRow(Code) :-
 
 % Predicate to read the column input
 readColumn(Column) :-
+    nl,
     write('  > Column |'),
     read(Column).
 

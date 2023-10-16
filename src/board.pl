@@ -1,11 +1,9 @@
-:-use_module(library(lists)).
-
 /**
  * board_create(-Board)
  * 
  * Create board with size 5. 
  */
-board_create(Board) :- board_create(5, Board).
+default_board_create(Board) :- board_create(5, Board).
 
 /**
  * board_create(+N, -Board)
@@ -88,12 +86,14 @@ board_create_line(N, I, J, [empty|Board]):-         % condition for empty: if no
  * Get initial board layout
  */
 initial_board(Board) :-
-    board_create(Board).
+    default_board_create(Board).
 
 /**
- * initial(-GameState)
+ * initial_state(+Size, -GameState) 
+ * gameState(Board, Turn)
  * 
  * Sets up initial game state.
  */
-initial(gamestate(Board, 1)) :-
-    initial_board(Board).
+initial_state(Size, gamestate(Board, 1)) :-
+    board_create(Size, Board).
+    %initial_board(Board).
