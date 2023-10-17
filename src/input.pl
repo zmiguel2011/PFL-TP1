@@ -36,6 +36,16 @@ validateRow(68, 4) :-
     write('You entered character D\n').
 validateRow(69, 5) :-
     write('You entered character E\n').
+validateRow(70, 6) :-
+    write('You entered character F\n').
+validateRow(71, 7) :-
+    write('You entered character G\n').
+validateRow(72, 8) :-
+    write('You entered character H\n').
+validateRow(73, 9) :-
+    write('You entered character I\n').
+validateRow(74, 10) :-
+    write('You entered character J\n').
 validateRow(Other, _) :-
     write('ERROR: That row is not valid!\n\n'),
     readRow(Input),
@@ -48,6 +58,11 @@ validateColumn(2, 2).
 validateColumn(3, 3).
 validateColumn(4, 4).
 validateColumn(5, 5).
+validateColumn(6, 6).
+validateColumn(7, 7).
+validateColumn(8, 8).
+validateColumn(9, 9).
+validateColumn(10, 10).
 
 validateColumn(_, NewColumn) :-
     write('ERROR: That column is not valid!\n\n'),
