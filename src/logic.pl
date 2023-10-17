@@ -15,5 +15,5 @@ askCoords(Board, Expected):-
 
 startGame(Player1, Player2, Size):-
       initial_state(Size, InitialState),
-      display_game(Size, InitialState),
+      display_game(InitialState),
       askCoords(InitialBoard, 'green').
