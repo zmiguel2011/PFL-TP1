@@ -25,9 +25,11 @@ choose_pawn(gamestate(Board, 1), pawn(Row,Col)):-
       manageRow(Row),
       manageColumn(Col),
       nl, format('Your coords : (~d, ~d)~n',[Row, Col]),
-      is_pawn_green(Board, Row, Col), !,
-      write('Cell is a green pawn!\n').
-
+      if_then_else(
+            not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
+            (write('Invalid choice! Cell is not a green pawn!\n'), fail), % then it is an invalid choice
+            write('Next player!\n') % else, proceed
+      ).
 /**
  * choose_pawn(+Gamestate, -Pawn)
  * Prompts player to choose a pawn to move (Player 2).
@@ -40,8 +42,11 @@ choose_pawn(gamestate(Board, 2), pawn(Row,Col)):-
       manageRow(Row),
       manageColumn(Col),
       nl, format('Your coords : (~d, ~d)~n',[Row, Col]),
-      is_pawn_blue(Board, Row, Col), !,
-      write('Cell is a blue pawn!\n').
+      if_then_else(
+            not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
+            (write('Invalid choice! Cell is not a blue pawn!\n'), fail), %  then it is an invalid choice
+            write('Next player!\n') % else, proceed
+      ).
 
 
 /**

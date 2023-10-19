@@ -1,3 +1,19 @@
+/**
+ * not(+X)
+ * 
+ * Negates X;
+ */
+not(X):- X, !, fail.
+not(_X).
+
+/**
+ * if_then_else(If, Then, _Else)
+ * 
+ * Conditional execution predicate.
+ */
+if_then_else(If, Then, _Else):- If, !, Then. 
+if_then_else(_If, _Then, Else):- Else.
+
 getValueFromList([H|_T], 1, Value) :-
         Value = H.
 
