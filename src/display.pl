@@ -33,7 +33,7 @@ letter(10, L) :- L='J'.
  * 
  * Prints the board. 
  */
-display_game(gamestate(Board, 1)) :-
+display_game(gamestate(Board, _P)) :-
     nl,
     length(Board, Size),
     Nmax is Size+1,

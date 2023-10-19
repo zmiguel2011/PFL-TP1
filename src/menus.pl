@@ -1,64 +1,74 @@
-mainMenu :-
-    printMainMenu,
-    askMenuOption,
+main_menu :-
+    print_main_menu,
+    choose_menu_option,
     read(Input),
-    manageInput(Input), !.
+    manage_input(Input), !.
 
-manageInput(1) :-
+manage_input(1) :-
     repeat,
-    askBoardSize,
+    choose_board_size,
     read(Size),
-    validateSize(Size),   % backtrack to repeat
+    validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    startGame('P','P', Size).
+    start_game('P','P', Size).
 
-manageInput(2) :-
+manage_input(2) :-
     repeat,
-    askBoardSize,
+    choose_board_size,
     read(Size),
-    validateSize(Size),   % backtrack to repeat
+    validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    startGame('P','C', Size).
+    start_game('P','C', Size).
 
-manageInput(3) :-
+manage_input(3) :-
     repeat,
-    askBoardSize,
+    choose_board_size,
     read(Size),
-    validateSize(Size),   % backtrack to repeat
+    validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    startGame('C','C', Size).
+    start_game('C','C', Size).
 
-manageInput(4) :-
-    printInstructions,
-    askMenuOption,
+manage_input(4) :-
+    print_instructions,
+    choose_menu_option,
     read(_Input),
-    goBack(_Input).
+    go_back(_Input).
 
-manageInput(0) :-
+manage_input(0) :-
     write('\nExiting...\n\n').
 /**
- * manageInput(+_Option)
+ * manage_input(+_Option)
  * 
  * Manages the input received. 
  */
-manageInput(_Option) :-
+manage_input(_Option) :-
     write('\nERROR: that option does not exist.\n\n'),
-    askMenuOption,
+    choose_menu_option,
     read(Input),
-    manageInput(Input).
+    manage_input(Input).
 
-goBack(_Option) :-
-    mainMenu.
+/**
+ * go_back(+_Option)
+ * 
+ * Returns to main menu. 
+ */
+go_back(_Option) :-
+    main_menu.
 
 
 /**
- * validateSize(+Size)
+ * validate_size(+Size)
  * 
  * Validadates the size received. 
  */
-validateSize(Size):- Size >= 5, Size =< 10.
+validate_size(Size):- Size >= 5, Size =< 10.
 
-printMainMenu :-
+/**
+ * print_main_menu
+ * 
+ * Prints the main menu.
+ */
+print_main_menu :-
     nl,nl,
     write(' _______________________________________________________________________ '),nl,
     write('|                                                                       |'),nl,
@@ -97,19 +107,30 @@ printMainMenu :-
 %  \____/\_____/\_| |_/\___/\____/  \_/ \_| \_|\___/ 
                                                    
                                                    
-
-
-askMenuOption :-
+/**
+ * choose_menu_option
+ * 
+ * Requests user to choose an option from the menu.
+ */
+choose_menu_option :-
     write('> Choose an option: ').
 
-
-askBoardSize :-
+/**
+ * choose_board_size
+ * 
+ * Requests user to choose a size for the board.
+ */
+choose_board_size :-
     write('\n Please input the desired board size for the game. The size must be an integer between 5 and 10. (eg. 5, default is 5x5)\n'),
     write('  > Size: ').
 
-
-printInstructions :-
-nl,nl,
+/**
+ * print_instructions
+ * 
+ * Prints the instructions of the game.
+ */
+print_instructions :-
+    nl,nl,
     write(' _______________________________________________________________________ '),nl,
     write('|                                                                       |'),nl,
     write('|                Claustro is an abstract two player game,               |'),nl,

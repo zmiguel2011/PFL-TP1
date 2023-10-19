@@ -8,4 +8,4 @@
 :- use_module(library(lists)).
 
 play :-
-      mainMenu.
+      main_menu.
