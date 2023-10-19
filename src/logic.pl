@@ -21,7 +21,7 @@ askCoords(Board, Expected):-
  */
 choose_pawn(gamestate(Board, 1), pawn(Row,Col)):- 
       repeat,
-      write('\n Please input the coords to the pawn you wish to move. (green)\n'),
+      write('\n Please input the coords to the pawn you wish to move.\n'),
       manageRow(Row),
       manageColumn(Col),
       nl, format('Your coords : (~d, ~d)~n',[Row, Col]),
@@ -36,7 +36,7 @@ choose_pawn(gamestate(Board, 1), pawn(Row,Col)):-
  */
 choose_pawn(gamestate(Board, 2), pawn(Row,Col)):-
       repeat,
-      write('\n Please input the coords to the pawn you wish to move. (blue)\n'),
+      write('\n Please input the coords to the pawn you wish to move.\n'),
       manageRow(Row),
       manageColumn(Col),
       nl, format('Your coords : (~d, ~d)~n',[Row, Col]),
@@ -95,12 +95,13 @@ is_pawn_blue(Board, Row, Col) :-
       getValueFromMatrix(Board, Row, Col, blueGoal).
 
 /**
- * green_player_turn(+Gamestate, -NewGamestate)
- * Handles green player's turn
+ * green_player_turn(+Gamestate, +Player, -NewGamestate)
+ * Handles green player's turn (player)
  * Gamestate - current gamestate
+ * Player - can be either 'P' or 'C', meaning Player and Computer, respectively
  * NewGamestate - new gamestate
  */
-green_player_turn(Gamestate, NewGamestate) :-
+green_player_turn(Gamestate, 'P', NewGamestate) :-
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       choose_pawn(Gamestate, GreenPawn),
       % TODO: move_pawn(GreenPawn, Gamestate, NewGamestate),
@@ -109,12 +110,13 @@ green_player_turn(Gamestate, NewGamestate) :-
 
 
 /**
- * blue_player_turn(+Gamestate, -NewGamestate)
- * Handles blue player's turn
+ * blue_player_turn(+Gamestate, +Player, -NewGamestate)
+ * Handles blue player's turn (player)
  * Gamestate - current gamestate
+ * Player - can be either 'P' or 'C', meaning Player and Computer, respectively
  * NewGamestate - new gamestate
  */
-blue_player_turn(Gamestate, NewGamestate) :-
+blue_player_turn(Gamestate, 'P', NewGamestate) :-
       write('\n------------------ PLAYER 1 (BLUE) -------------------\n\n'),
       choose_pawn(Gamestate, BluePawn),
       % TODO: move_pawn(BluePawn, Gamestate, NewGamestate),
@@ -125,35 +127,39 @@ blue_player_turn(Gamestate, NewGamestate) :-
 % TODO: checkGameState(gamestate(Board, P))
 
 /**
- * game_loop(+Gamestate)
+ * game_loop(+Gamestate, +Player1, +Player2)
  * main game function, waits for player 1 (green) to move and then checks gamestate
  * Gamestate - current gamestate
+ * Player1 - can be either 'P' or 'C', meaning Player and Computer, respectively
+ * Player2 - can be either 'P' or 'C', meaning Player and Computer, respectively
  */
-game_loop(gamestate(Board, 1)) :-
-      green_player_turn(gamestate(Board, 1), NewGameState),
+game_loop(gamestate(Board, 1), Player1, Player2) :-
+      green_player_turn(gamestate(Board, 1), Player1, NewGameState),
       /*(
             checkGameState(NewGameState);
             game_over(NewGameState)
       ),*/
-      % game_loop(NewGameState).
-      game_loop(gamestate(Board, 2)). % delete after (testing)
+      % game_loop(NewGameState, Player1, Player2).
+      game_loop(gamestate(Board, 2), Player1, Player2). % delete after (testing)
 
 /**
- * game_loop(+Gamestate)
+ * game_loop(+Gamestate, +Player1, +Player2)
  * main game function, waits for player 2 (blue) to move and then checks gamestate
  * Gamestate - current gamestate
+ * Player1 - can be either 'P' or 'C', meaning Player and Computer, respectively
+ * Player2 - can be either 'P' or 'C', meaning Player and Computer, respectively
  */
-game_loop(gamestate(Board, 2)) :-
-      blue_player_turn(gamestate(Board, 2), NewGameState),
+game_loop(gamestate(Board, 2), Player1, Player2) :-
+      blue_player_turn(gamestate(Board, 2), Player2, NewGameState),
       /*(
             %checkGameState(NewGameState);
             game_over(NewGameState)
       ),*/
-      % game_loop(NewGameState).
-      game_loop(gamestate(Board, 1)). % delete after (testing)
+      % game_loop(NewGameState, Player1, Player2).
+      game_loop(gamestate(Board, 1), Player1, Player2). % delete after (testing)
 
 
 start_game(Player1, Player2, Size):-
       initial_state(Size, InitialState),
       display_game(InitialState),
-      game_loop(InitialState).
+      game_loop(InitialState, Player1, Player2).

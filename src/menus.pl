@@ -26,9 +26,17 @@ manage_input(3) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','C', Size).
+    start_game('C','P', Size).
 
 manage_input(4) :-
+    repeat,
+    choose_board_size,
+    read(Size),
+    validate_size(Size),   % backtrack to repeat
+    !, % when input is valid, cut!, we won't backtrack to repeat anymore
+    start_game('C','C', Size).
+
+manage_input(5) :-
     print_instructions,
     choose_menu_option,
     read(_Input),
@@ -62,6 +70,7 @@ go_back(_Option) :-
  * Validadates the size received. 
  */
 validate_size(Size):- Size >= 5, Size =< 10.
+validate_size(Size):- (Size < 5; Size > 10), !, write('\nERROR: Size is invalid.\n\n'), fail.
 
 /**
  * print_main_menu
@@ -90,9 +99,11 @@ print_main_menu :-
     write('|                                                                       |'),nl,
     write('|                          2. Player vs Computer                        |'),nl,
     write('|                                                                       |'),nl,
-	write('|                          3. Computer vs Computer                      |'),nl,
+	write('|                          3. Computer vs Player                        |'),nl,
+    write('|                                                                       |'),nl,
+	write('|                          4. Computer vs Computer                      |'),nl,
     write('|                                                                       |'),nl,                                                   
-    write('|                          4. Instructions                              |'),nl,
+    write('|                          5. Instructions                              |'),nl,
     write('|                                                                       |'),nl,
     write('|                          0. Exit                                      |'),nl,
     write('|                                                                       |'),nl,
