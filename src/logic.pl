@@ -1,6 +1,6 @@
 checkCell(Board, RowIndex, ColIndex, Expected) :-
     (Expected == greenGoal),
-    (getValueFromMatrix(Board,RowIndex,ColIndex,Expected),
+    (getValueFromBoard(Board,RowIndex,ColIndex,Expected),
     write('cell is green\n'));
     (write('cell isnt green\n'),
     askCoords(Board,Expected)).
@@ -51,53 +51,53 @@ choose_pawn(gamestate(Board, 2), pawn(Row,Col)):-
 
 /**
  * is_pawn_green(+Board, +Row, +Col)
- * Checks if cell (Row, Column) is 'green' using the predicate getValueFromMatrix (declared in utils.pl)
+ * Checks if cell (Row, Column) is 'green' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
  * Col - col to search for
  */
 is_pawn_green(Board, Row, Col) :-  
-      getValueFromMatrix(Board, Row, Col, green).
+      getValueFromBoard(Board, Row, Col, green).
 
 /**
  * is_pawn_blue(+Board, +Row, +Col)
- * Checks if cell (Row, Column) is 'blue' using the predicate getValueFromMatrix (declared in utils.pl)
+ * Checks if cell (Row, Column) is 'blue' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
  * Col - col to search for
  */
 is_pawn_blue(Board, Row, Col) :- 
-      getValueFromMatrix(Board, Row, Col, blue).
+      getValueFromBoard(Board, Row, Col, blue).
 
 /**
  * is_empty_cell(+Board, +Row, +Col)
- * Checks if cell (Row, Column) is 'empty' using the predicate getValueFromMatrix (declared in utils.pl)
+ * Checks if cell (Row, Column) is 'empty' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
  * Col - col to search for
  */
  is_empty_cell(Board, Row, Col) :- 
-      getValueFromMatrix(Board, Row, Col, empty).
+      getValueFromBoard(Board, Row, Col, empty).
 
 /**
  * is_green_goal(+Board, +Row, +Col)
- * Checks if cell (Row, Column) is 'greenGoal' using the predicate getValueFromMatrix (declared in utils.pl)
+ * Checks if cell (Row, Column) is 'greenGoal' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
  * Col - col to search for
  */
  is_green_goal(Board, Row, Col) :- 
-      getValueFromMatrix(Board, Row, Col, greenGoal).
+      getValueFromBoard(Board, Row, Col, greenGoal).
 
 /**
  * is_blue_goal(+Board, +Row, +Col)
- * Checks if cell (Row, Column) is 'blueGoal' using the predicate getValueFromMatrix (declared in utils.pl)
+ * Checks if cell (Row, Column) is 'blueGoal' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
  * Col - col to search for
  */
  is_blue_goal(Board, Row, Col) :- % 
-      getValueFromMatrix(Board, Row, Col, blueGoal).
+      getValueFromBoard(Board, Row, Col, blueGoal).
 
 /**
  * green_player_turn(+Gamestate, +Player, -NewGamestate)

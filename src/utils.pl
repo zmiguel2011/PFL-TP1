@@ -14,24 +14,69 @@ not(_X).
 if_then_else(If, Then, _Else):- If, !, Then. 
 if_then_else(_If, _Then, Else):- Else.
 
-getValueFromList([H|_T], 1, Value) :-
-        Value = H.
-
-getValueFromList([_H|T], Index, Value) :-
+/**
+ * getValueFromRow(+Row, +Index, -Value)
+ * 
+ * Retrieves value from Row at given index.
+ */
+getValueFromRow([H|_T], 1, H).
+getValueFromRow([_H|T], Index, Value) :-
         Index > 1,
         Index1 is Index - 1,
-        getValueFromList(T, Index1, Value).
+        getValueFromRow(T, Index1, Value).
 
-getValueFromMatrix([H|_T], 1, Column, Value) :-
-        getValueFromList(H, Column, Value).
+/**
+ * getValueFromBoard(+Board, +Row, +Col, -Value)
+ * 
+ * Retrieves value from Board at given position (Row, Col).
+ */
+getValueFromBoard([H|_T], 1, Col, Value) :-
+        getValueFromRow(H, Col, Value).
 
-getValueFromMatrix([_H|T], Row, Column, Value) :-
+getValueFromBoard([_H|T], Row, Col, Value) :-
         Row > 1,
         Row1 is Row - 1,
-        getValueFromMatrix(T, Row1, Column, Value).
+        getValueFromBoard(T, Row1, Col, Value).
+
+
+/**
+ * replaceInRow(+Row, +Index, -NewRow)
+ * 
+ * Replaces value from Row at given index and returns NewRow.
+ */
+replaceInRow([_H|T], 1, Value, [Value|T]).
+replaceInRow([H|T], Index, Value, [H|TNew]) :-
+        Index > 1,
+        Index1 is Index - 1,
+        replaceInRow(T, Index1, Value, TNew).
+
+/**
+ * replaceInBoard(+Board, +Row, +Col, -NewBoard)
+ * 
+ * Replaces value from Board at given position (Row, Col) and returns NewBoard.
+ */
+replaceInBoard([H|T], 1, Col,Value, [HNew|T]) :-
+        replaceInRow(H, Col, Value, HNew).
+
+replaceInBoard([H|T], Row, Col, Value, [H|TNew]) :-
+        Row > 1,
+        Row1 is Row - 1,
+        replaceInBoard(T, Row1, Col, Value, TNew).
 
 ignore_newlines :-
     repeat,
     peek_char(Char),  % Peek at the next character without consuming it
     ((Char == '\n', get_char(_)) ; (Char == end_of_file ; Char \= '\n')),
     !.
+
+/**
+ * between(+L, +R, ?I)
+ * 
+ * If I is binded, it checks if L =< I =< R.
+ * If I is not binded, it is successively assigned
+ * to the integers between L and R inclusive.
+ */
+between(L, R, I) :- ground(I), !, L =< I, I =< R.
+between(L, L, I) :- I is L, !.
+between(L, R, I) :- L < R, I is L.
+between(L, R, I) :- L < R, L1 is L+1, between(L1, R, I).
