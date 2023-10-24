@@ -256,8 +256,8 @@ game_loop(gamestate(Board, 2), Player1, Player2) :-
             %checkGameState(NewGameState);
             game_over(NewGameState)
       ),*/
-      % game_loop(NewGameState, Player1, Player2).
-      game_loop(gamestate(Board, 1), Player1, Player2). % delete after (testing)
+      game_loop(NewGameState, Player1, Player2).
+      % game_loop(gamestate(Board, 1), Player1, Player2). % delete after (testing)
 
 
 start_game(Player1, Player2, Size):-
