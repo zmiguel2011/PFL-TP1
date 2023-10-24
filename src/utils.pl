@@ -15,12 +15,24 @@ if_then_else(If, Then, _Else):- If, !, Then.
 if_then_else(_If, _Then, Else):- Else.
 
 /**
+ * getValueFromList(+List, +Index, -Value)
+ * 
+ * Retrieves value from List at given index.
+ */
+
+getValueFromList([Value|_T], 0, Value).
+getValueFromList([_H|T], Index, Value) :-
+        Index > 0,
+        Index1 is Index - 1,
+        getValueFromList(T, Index1, Value).
+
+/**
  * getValueFromRow(+Row, +Index, -Value)
  * 
  * Retrieves value from Row at given index.
  */
 
-getValueFromRow([H|_T], 1, H).
+getValueFromRow([Value|_T], 1, Value).
 getValueFromRow([_H|T], Index, Value) :-
         Index > 1,
         Index1 is Index - 1,
