@@ -1,4 +1,4 @@
-valid_move(gamestate(Board,Player),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move(gamestate(Board,_P),pawn(Row,Col),coords(NewRow,NewCol)):-
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
       between(1,Max,NewCol), %checks if new value is within the boundary of the board
@@ -10,28 +10,35 @@ valid_move(gamestate(Board,Player),pawn(Row,Col),coords(NewRow,NewCol)):-
         (NewRow =:= Row, NewCol =:= Col - 1)  % Up
       ).
 
-% Define a predicate to format and print the list of moves.
+/**
+ * print_moves(+ValidMoves)
+ * Print each move in the list of valid moves.
+ * ValidMoves - the list of valid moves for a pawn given
+ */
 print_moves([]) :-
     write('No valid moves available.').
     
 print_moves(Moves) :-
-    write('Valid Moves:'),
-    nl,
+    write('Valid Moves:\n'),
     print_moves_list(Moves, 0).
 
-% Define a helper predicate to print each move in the list.
+/**
+ * print_moves_list(+ValidMoves, +Index)
+ * Print each move in the list of valid moves.
+ * ValidMoves - the list of valid moves for a pawn given
+ * Index - the index (in the list) to the current move being printed
+ */
 print_moves_list([], _Index).
-
 print_moves_list([coords(Row, Col) | Rest], Index) :-
     letter(Row,Letter),
-    format(' > ~w. Row: ~w | Col: ~w', [Index, Letter, Col]), nl,
+    format(' ~w. -> Row: ~w | Col: ~w ~n', [Index, Letter, Col]),
     Index1 is Index + 1,
     print_moves_list(Rest, Index1).
 
 
 /**
  * valid_moves(+Gamestate, +Pawn, -ValidMoves)
- * Returns a list of valid moves gor a given pawn.
+ * Returns a list of valid moves for a given pawn.
  * Gamestate - current gamestate
  * Pawn - a given pawn
  * ValidMoves - the list of valid moves for the pawn given
@@ -42,38 +49,30 @@ valid_moves(Gamestate,Pawn,ValidMoves):-
 
 /**
  * choose_pawn(+Gamestate, -Pawn)
- * Prompts player to choose a pawn to move (Player 1).
+ * Prompts player to choose a pawn to move.
  * Gamestate - current gamestate
  * Pawn - used to store the choosen pawn
  */
-choose_pawn(gamestate(Board, 1), pawn(Row,Col)):- 
+choose_pawn(gamestate(Board, P), pawn(Row,Col)):- 
       repeat,
       write('\n Please input the coords to the pawn you wish to move.\n'),
       manageRow(Row),
       manageColumn(Col),
       nl, format('Your pawn: (~d, ~d)~n',[Row, Col]),
       if_then_else(
-            not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
-            (write('Invalid choice! Cell is not a green pawn!\n'), fail), % then it is an invalid choice
-            nl % else, proceed
+            P == 1,           % if P is Player 1 (green)
+            if_then_else(      % then check if a valid green pawn was choosen
+                  not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
+                  (write('Invalid choice! Cell is not a green pawn!\n'), fail), % then it is an invalid choice
+                  nl % else, proceed
+            ),
+            if_then_else(      % else check if a valid blue pawn was choosen
+                  not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
+                  (write('Invalid choice! Cell is not a blue pawn!\n'), fail), %  then it is an invalid choice
+                  nl % else, proceed
+            )
       ).
-/**
- * choose_pawn(+Gamestate, -Pawn)
- * Prompts player to choose a pawn to move (Player 2).
- * Gamestate - current gamestate
- * Pawn - used to store the choosen pawn
- */
-choose_pawn(gamestate(Board, 2), pawn(Row,Col)):-
-      repeat,
-      write('\n Please input the coords to the pawn you wish to move.\n'),
-      manageRow(Row),
-      manageColumn(Col),
-      nl, format('Your coords : (~d, ~d)~n',[Row, Col]),
-      if_then_else(
-            not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
-            (write('Invalid choice! Cell is not a blue pawn!\n'), fail), %  then it is an invalid choice
-            nl % else, proceed
-      ).
+
 
 
 /**
@@ -89,7 +88,7 @@ make_move(Gamestate, Pawn, ValidMoves, NewGamestate):-
       write('\n Please input the index for the move you wish to make.\n'),
       length(ValidMoves, L),
       L1 is L - 1,
-      read(Index),
+      write('  > Index:  '), read(Index),
       Index >= 0, Index =< L1,
       !,
       getValueFromList(ValidMoves, Index, Coords),
@@ -241,6 +240,5 @@ game_loop(gamestate(Board, 2), Player1, Player2) :-
 
 
 start_game(Player1, Player2, Size):-
-      initial_state(Size, InitialState),
-      display_game(InitialState),
-      game_loop(InitialState, Player1, Player2).
+      initial_state(Size, Gamestate),
+      game_loop(Gamestate, Player1, Player2).

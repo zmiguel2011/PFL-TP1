@@ -15,7 +15,7 @@ manageColumn(NewColumn) :-
 % Predicate to read the row input as char
 readRow(Code) :-
     nl,
-    write('  > Row:    '),
+    write('  > Row:  '),
     ignore_newlines,
     get_char(Char),
     skip_line,
@@ -24,7 +24,7 @@ readRow(Code) :-
 % Predicate to read the column input
 readColumn(Column) :-
     nl,
-    write('  > Column:   '),
+    write('  > Column:  '),
     read(Column).
 
 % Predicate to validate the row input
@@ -48,7 +48,7 @@ validateRow(73, 9) :-
     write('You entered character I\n').
 validateRow(74, 10) :-
     write('You entered character J\n').
-validateRow(Other, _) :-
+validateRow(_Other, _Row) :-
     write('ERROR: That row is not valid!\n\n'),
     fail.
 
@@ -65,6 +65,6 @@ validateColumn(8, 8).
 validateColumn(9, 9).
 validateColumn(10, 10).
 
-validateColumn(_, NewColumn) :-
+validateColumn(_, _NewColumn) :-
     write('ERROR: That column is not valid!\n\n'),
     fail.
