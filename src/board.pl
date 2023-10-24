@@ -77,7 +77,7 @@ initial_board(Board) :-
  * 
  * Sets up initial game state.
  */
-initial_state(Size, gamestate(Board, 1)) :-
+initial_state(Size, gamestate(Board, _P)) :-
     board_create(Size, Board1),                             % creates board with given Size and fills blue, green and empty cells
     replaceInBoard(Board1, 1, 1, greenGoal, Board2),        % updates greenGoal cell 
     replaceInBoard(Board2, Size, Size, blueGoal, Board3),   % updates blueGoal cell 
