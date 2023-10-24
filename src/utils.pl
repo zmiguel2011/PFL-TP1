@@ -19,6 +19,7 @@ if_then_else(_If, _Then, Else):- Else.
  * 
  * Retrieves value from Row at given index.
  */
+
 getValueFromRow([H|_T], 1, H).
 getValueFromRow([_H|T], Index, Value) :-
         Index > 1,

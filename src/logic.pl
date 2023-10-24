@@ -1,17 +1,37 @@
-checkCell(Board, RowIndex, ColIndex, Expected) :-
-    (Expected == greenGoal),
-    (getValueFromBoard(Board,RowIndex,ColIndex,Expected),
-    write('cell is green\n'));
-    (write('cell isnt green\n'),
-    askCoords(Board,Expected)).
+valid_move(gamestate(Board,Player),pawn(Row,Col),pawn(NewRow,NewCol)):-
+      length(Board,Max), %get the max boundary of the board
+      between(1,Max,NewRow), %checks if new value is within the boundary of the board
+      between(1,Max,NewCol), %checks if new value is within the boundary of the board
+      getValueFromBoard(Board,NewRow,NewCol,empty),
+      (
+        (NewRow =:= Row + 1, NewCol =:= Col); % Right
+        (NewRow =:= Row - 1, NewCol =:= Col); % Left
+        (NewRow =:= Row, NewCol =:= Col + 1); % Down
+        (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+      ).
 
-askCoords(Board, Expected):-
-      manageRow(Row),
-      manageColumn(Col),
-      write('\n'),
-      format('Your coords : (~d, ~d)~n',[Row, Col]),
-      checkCell(Board,Row,Col,Expected),
-      write('IT IS DESIRED PIECE\n').
+% Define a predicate to format and print the list of moves.
+print_moves([]) :-
+    write('No valid moves available.').
+    
+print_moves(Moves) :-
+    write('Valid Moves:'),
+    nl,
+    print_moves_list(Moves).
+
+% Define a helper predicate to print each move in the list.
+print_moves_list([]).
+
+print_moves_list([pawn(Row, Col) | Rest]) :-
+    letter(Row,Letter),
+    format('> Row: ~w | Col: ~w', [Letter, Col]),
+    nl,
+    print_moves_list(Rest).
+
+
+valid_moves(Gamestate,Pawn,ValidMoves):-
+    findall(NewPawn,valid_move(Gamestate,Pawn,NewPawn),ValidMoves),
+    print_moves(ValidMoves).
 
 /**
  * choose_pawn(+Gamestate, -Pawn)
@@ -109,6 +129,7 @@ is_pawn_blue(Board, Row, Col) :-
 green_player_turn(Gamestate, 'P', NewGamestate) :-
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       choose_pawn(Gamestate, GreenPawn),
+      valid_moves(Gamestate,GreenPawn,ValidMoves),
       % TODO: move_pawn(GreenPawn, Gamestate, NewGamestate),
       % display_game(NewGamestate).
       display_game(Gamestate). % delete after (testing)

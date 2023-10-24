@@ -166,7 +166,7 @@ print_instructions :-
     write('|                                                                       |'),nl,                                                   
     write('|               -----------------------------------------               |'),nl,
     write('|                                                                       |'),nl, 
-    write('|                      Enter ay key to go back.                         |'),nl,                                                  
+    write('|                     Enter any key to go back.                         |'),nl,                                                  
     write('|                                                                       |'),nl,                                                   
     write(' _______________________________________________________________________ '),nl,nl,nl.
 
