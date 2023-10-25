@@ -1,13 +1,20 @@
-valid_move(gamestate(Board,_P),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move(gamestate(Board,P),pawn(Row,Col),coords(NewRow,NewCol)):-
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
       between(1,Max,NewCol), %checks if new value is within the boundary of the board
-      getValueFromBoard(Board,NewRow,NewCol,empty),
       (
-        (NewRow =:= Row + 1, NewCol =:= Col); % Right
-        (NewRow =:= Row - 1, NewCol =:= Col); % Left
-        (NewRow =:= Row, NewCol =:= Col + 1); % Down
-        (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            getValueFromBoard(Board,NewRow,NewCol,empty), % if cell is empty
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            );
+            if_then_else( % if cell is a goal
+                  P == 1,           % if P is Player 1 (green)
+                  getValueFromBoard(Board,NewRow,NewCol,greenGoal), % checks if it is greenGoal
+                  getValueFromBoard(Board,NewRow,NewCol,blueGoal) % checks if it is blueGoal
+            )
       ).
 
 /**
