@@ -162,7 +162,7 @@ print_instructions :-
     write('|                              Symbols:                                 |'),nl,      
     write('|               Green pawns: ( g ) --- Blue pawns: ( b )                |'),nl,
     write('|                Green goal: ( G ) --- Blue goal: ( B )                 |'),nl,      
-    write('|            Empty cells: ( . ) --- inaccessible cells: ( - )           |'),nl,      
+    write('|            Empty cells: (  ) --- inaccessible cells: ( - )            |'),nl,      
     write('|                                                                       |'),nl,                                                   
     write('|               -----------------------------------------               |'),nl,
     write('|                                                                       |'),nl, 

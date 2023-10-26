@@ -11,7 +11,7 @@ initialBoard([
 
 symbol(greenGoal,S) :- S='G'.
 symbol(blueGoal,S) :- S='B'.
-symbol(empty,S) :- S='.'.
+symbol(empty,S) :- S=' '.
 symbol(blue,S) :- S='b'.
 symbol(green,S) :- S='g'.
 symbol(inaccessible,S) :- S='-'.
