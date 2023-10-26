@@ -1,5 +1,5 @@
  /**
- * valid_move(+GameState, +Pawn, -NewCoords)
+ * valid_move(+Gamestate, +Pawn, -NewCoords)
  * Validate or return possible NewCoords for a given pawn
  * Gamestate - current gamestate
  * Pawn - the pawn given
@@ -113,14 +113,14 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
 
 
 /**
- * make_move(+Gamestate, +Pawn, +ValidMoves, -NewGamestate)
- * Prompts the player to choose a move to make.
- * Pawn - the pawn to movepawn(Row, Col)
+ * choose_move(+Gamestate, +Pawn, +ValidMoves, -NewCoords)
+ * Prompts the player to choose a move to make from the valid_moves list.
+ * Pawn - the pawn to move -> pawn(Row, Col)
  * Gamestate - current gamestate
  * ValidMoves - list of valid moves
- * NewGamestate - new gamestate
+ * NewCoords - new coordinates for the pawn
  */
-make_move(Gamestate, Pawn, ValidMoves, NewGamestate):-
+choose_move(Gamestate, Pawn, ValidMoves, NewCoords):-
       repeat,
       write('\n Please input the index for the move you wish to make.\n'),
       length(ValidMoves, L),
@@ -128,9 +128,7 @@ make_move(Gamestate, Pawn, ValidMoves, NewGamestate):-
       write('  > Index:  '), read(Index),
       Index >= 0, Index =< L1,
       !,
-      getValueFromList(ValidMoves, Index, Coords),
-      move_pawn(Gamestate, Pawn, Coords, NewGamestate).    
-
+      getValueFromList(ValidMoves, Index, NewCoords).
 
 /**
  * move_pawn(+Gamestate, +Pawn, +NewCoords, -NewGamestate)
@@ -144,6 +142,19 @@ move_pawn(gamestate(Board, _P), pawn(Row, Col), coords(NewRow, NewCol), gamestat
       getValueFromBoard(Board, Row, Col, Value),
       replaceInBoard(Board, Row, Col, empty, Board1),
       replaceInBoard(Board1, NewRow, NewCol, Value, NewBoard).
+
+
+/**
+ * move(+Gamestate, +Move, -NewGamestate)
+ * Validate and execute a move
+ * Gamestate - current gamestate
+ * Move - a given move -> move(Pawn, NewCoords)
+ * Pawn - pawn the player choose to move
+ * NewCoords - the new coordinates for the choosen pawn
+ * NewGamestate - new gamestate
+ */
+move(Gamestate, move(Pawn, NewCoords), NewGamestate):-
+      move_pawn(Gamestate, Pawn, NewCoords, NewGamestate).  
 
 
 /**
@@ -208,7 +219,8 @@ green_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       choose_pawn(Gamestate, GreenPawn),
       valid_moves(Gamestate, GreenPawn, ValidMoves),
-      make_move(Gamestate, GreenPawn, ValidMoves, NewGamestate).
+      choose_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
+      move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
       %display_game(Gamestate). % delete after (testing)
 
 
@@ -224,7 +236,8 @@ blue_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       choose_pawn(Gamestate, BluePawn),
       valid_moves(Gamestate, BluePawn, ValidMoves),
-      make_move(Gamestate, BluePawn, ValidMoves, NewGamestate).
+      choose_move(Gamestate, BluePawn, ValidMoves, NewCoords),
+      move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
       %display_game(Gamestate). % delete after (testing)
 
 
