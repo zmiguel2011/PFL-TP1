@@ -128,10 +128,10 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
  * NewCoords - new coordinates for the pawn
  */
 choose_move(Gamestate, Pawn, ValidMoves, NewCoords):-
-      repeat,
-      write('\n Please input the index for the move you wish to make.\n'),
       length(ValidMoves, L),
       L1 is L - 1,
+      repeat,
+      write('\n Please input the index for the move you wish to make.\n'),
       write('  > Index:  '), read(Index),
       Index >= 0, Index =< L1,
       !,
@@ -229,7 +229,22 @@ green_player_turn(Gamestate, 'P', NewGamestate) :-
       print_moves(ValidMoves),
       choose_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
       move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
-      %display_game(Gamestate). % delete after (testing)
+
+/**
+ * green_player_turn(+Gamestate, +Player, -NewGamestate)
+ * Handles green player's turn (computer)
+ * Gamestate - current gamestate
+ * Player - can be either 'P' or 'C', meaning Player and Computer, respectively
+ * NewGamestate - new gamestate
+ */
+green_player_turn(Gamestate, 'C', NewGamestate) :-
+      write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
+      display_game(Gamestate),
+      choose_random_pawn(Gamestate, GreenPawn),
+      valid_moves(Gamestate, GreenPawn, ValidMoves),
+      print_moves(ValidMoves),
+      choose_random_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
+      move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
 
 
 /**
@@ -244,9 +259,25 @@ blue_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       choose_pawn(Gamestate, BluePawn),
       valid_moves(Gamestate, BluePawn, ValidMoves),
+      print_moves(ValidMoves),
       choose_move(Gamestate, BluePawn, ValidMoves, NewCoords),
       move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
-      %display_game(Gamestate). % delete after (testing)
+
+/**
+ * blue_player_turn(+Gamestate, +Player, -NewGamestate)
+ * Handles blue player's turn (computer)
+ * Gamestate - current gamestate
+ * Player - can be either 'P' or 'C', meaning Player and Computer, respectively
+ * NewGamestate - new gamestate
+ */
+blue_player_turn(Gamestate, 'C', NewGamestate) :-
+      write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
+      display_game(Gamestate),
+      choose_random_pawn(Gamestate, BluePawn),
+      valid_moves(Gamestate, BluePawn, ValidMoves),
+      print_moves(ValidMoves),
+      choose_random_move(Gamestate, BluePawn, ValidMoves, NewCoords),
+      move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
 
 
 /**
