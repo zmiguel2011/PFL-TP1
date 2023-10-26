@@ -1,5 +1,5 @@
  /**
- * valid_move(+Gamestate, +Pawn, -NewCoords)
+ * valid_move(+Gamestate, +Pawn, -NewCoords) (Player 1)
  * Validate or return possible NewCoords for a given pawn
  * Gamestate - current gamestate
  * Pawn - the pawn given
@@ -26,6 +26,13 @@ valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
             )
       ).
 
+/**
+ * valid_move(+Gamestate, +Pawn, -NewCoords) (Player 2)
+ * Validate or return possible NewCoords for a given pawn
+ * Gamestate - current gamestate
+ * Pawn - the pawn given
+ * NewCoords - new (possible) coordinates for the pawn given
+ */
 valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -46,6 +53,17 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
             )
       ).
+
+
+/**
+ * valid_moves(+Gamestate, +Pawn, -ValidMoves)
+ * Returns a list of valid moves for a given pawn.
+ * Gamestate - current gamestate
+ * Pawn - a given pawn
+ * ValidMoves - the list of valid moves for the pawn given
+ */
+valid_moves(Gamestate, Pawn, ValidMoves):-
+    findall(NewCoords, valid_move(Gamestate,Pawn,NewCoords), ValidMoves).
 
 /**
  * print_moves(+ValidMoves)
@@ -72,17 +90,6 @@ print_moves_list([coords(Row, Col) | Rest], Index) :-
     Index1 is Index + 1,
     print_moves_list(Rest, Index1).
 
-
-/**
- * valid_moves(+Gamestate, +Pawn, -ValidMoves)
- * Returns a list of valid moves for a given pawn.
- * Gamestate - current gamestate
- * Pawn - a given pawn
- * ValidMoves - the list of valid moves for the pawn given
- */
-valid_moves(Gamestate,Pawn,ValidMoves):-
-    findall(NewCoords,valid_move(Gamestate,Pawn,NewCoords),ValidMoves),
-    print_moves(ValidMoves).
 
 /**
  * choose_pawn(+Gamestate, -Pawn)
@@ -219,6 +226,7 @@ green_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       choose_pawn(Gamestate, GreenPawn),
       valid_moves(Gamestate, GreenPawn, ValidMoves),
+      print_moves(ValidMoves),
       choose_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
       move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
       %display_game(Gamestate). % delete after (testing)
