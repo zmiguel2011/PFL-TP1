@@ -1,4 +1,11 @@
-valid_move(gamestate(Board,P),pawn(Row,Col),coords(NewRow,NewCol)):-
+ /**
+ * valid_move(+GameState, +Pawn, -NewCoords)
+ * Validate or return possible NewCoords for a given pawn
+ * Gamestate - current gamestate
+ * Pawn - the pawn given
+ * NewCoords - new (possible) coordinates for the pawn given
+ */
+valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
       between(1,Max,NewCol), %checks if new value is within the boundary of the board
@@ -10,10 +17,33 @@ valid_move(gamestate(Board,P),pawn(Row,Col),coords(NewRow,NewCol)):-
                   (NewRow =:= Row, NewCol =:= Col + 1); % Down
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
             );
-            if_then_else( % if cell is a goal
-                  P == 1,           % if P is Player 1 (green)
-                  getValueFromBoard(Board,NewRow,NewCol,greenGoal), % checks if it is greenGoal
-                  getValueFromBoard(Board,NewRow,NewCol,blueGoal) % checks if it is blueGoal
+            getValueFromBoard(Board,NewRow,NewCol,greenGoal), % checks if it is greenGoal
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            )
+      ).
+
+valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
+      length(Board,Max), %get the max boundary of the board
+      between(1,Max,NewRow), %checks if new value is within the boundary of the board
+      between(1,Max,NewCol), %checks if new value is within the boundary of the board
+      (
+            getValueFromBoard(Board,NewRow,NewCol,empty), % if cell is empty
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            );
+            getValueFromBoard(Board,NewRow,NewCol,blueGoal), % checks if it is blueGoal
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
             )
       ).
 
