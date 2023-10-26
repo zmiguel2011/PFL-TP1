@@ -1,11 +1,12 @@
  /**
- * valid_move(+Gamestate, +Pawn, -NewCoords) (Player 1)
+ * valid_move_pawn(+Gamestate, +Pawn, -NewCoords) (Player 1)
  * Validate or return possible NewCoords for a given pawn
  * Gamestate - current gamestate
  * Pawn - the pawn given
  * NewCoords - new (possible) coordinates for the pawn given
  */
-valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
+      is_pawn_green(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
       between(1,Max,NewCol), %checks if new value is within the boundary of the board
@@ -27,13 +28,72 @@ valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
       ).
 
 /**
- * valid_move(+Gamestate, +Pawn, -NewCoords) (Player 2)
+ * valid_move_pawn(+Gamestate, +Pawn, -NewCoords) (Player 2)
  * Validate or return possible NewCoords for a given pawn
  * Gamestate - current gamestate
  * Pawn - the pawn given
  * NewCoords - new (possible) coordinates for the pawn given
  */
+valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
+      is_pawn_blue(Board, Row, Col),
+      length(Board,Max), %get the max boundary of the board
+      between(1,Max,NewRow), %checks if new value is within the boundary of the board
+      between(1,Max,NewCol), %checks if new value is within the boundary of the board
+      (
+            getValueFromBoard(Board,NewRow,NewCol,empty), % if cell is empty
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            );
+            getValueFromBoard(Board,NewRow,NewCol,blueGoal), % checks if it is blueGoal
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            )
+      ).
+
+ /**
+ * valid_move_pawn(+Gamestate, -Pawn, -NewCoords) (Player 1)
+ * Return possible a pawn and possible NewCoords for it to move to
+ * Gamestate - current gamestate
+ * Pawn - the pawn returned
+ * NewCoords - new (possible) coordinates for the pawn returned
+ */
+valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
+      get_green_pawn(Board, Row, Col),
+      length(Board,Max), %get the max boundary of the board
+      between(1,Max,NewRow), %checks if new value is within the boundary of the board
+      between(1,Max,NewCol), %checks if new value is within the boundary of the board
+      (
+            getValueFromBoard(Board,NewRow,NewCol,empty), % if cell is empty
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            );
+            getValueFromBoard(Board,NewRow,NewCol,greenGoal), % checks if it is greenGoal
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                  (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                  (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                  (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+            )
+      ).
+
+ /**
+ * valid_move_pawn(+Gamestate, -Pawn, -NewCoords) (Player 1)
+ * Return possible a pawn and possible NewCoords for it to move to
+ * Gamestate - current gamestate
+ * Pawn - the pawn returned
+ * NewCoords - new (possible) coordinates for the pawn returned
+ */
 valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
+      get_blue_pawn(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
       between(1,Max,NewCol), %checks if new value is within the boundary of the board
@@ -56,39 +116,76 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
 
 
 /**
- * valid_moves(+Gamestate, +Pawn, -ValidMoves)
+ * valid_moves_pawn(+Gamestate, +Pawn, -ListOfMoves)
  * Returns a list of valid moves for a given pawn.
  * Gamestate - current gamestate
  * Pawn - a given pawn
- * ValidMoves - the list of valid moves for the pawn given
+ * ListOfMoves - the list of valid moves for the pawn given
  */
-valid_moves(Gamestate, Pawn, ValidMoves):-
-    findall(NewCoords, valid_move(Gamestate,Pawn,NewCoords), ValidMoves).
+valid_moves_pawn(Gamestate, Pawn, ListOfMoves):-
+    findall(NewCoords, valid_move_pawn(Gamestate, Pawn, NewCoords), ListOfMoves).
+
+/**
+ * valid_moves(+Gamestate, +Player, -ListOfMoves)
+ * Returns a list of valid moves for a given pawn.
+ * Gamestate - current gamestate
+ * Player - a player
+ * ListOfMoves - the list of valid moves for the pawn given
+ */
+valid_moves(gamestate(Board, P), Player, ListOfMoves):-
+      bagof(Pawn-NewCoords, valid_move(gamestate(Board, P), Pawn, NewCoords), ListOfMoves).
+
 
 /**
  * print_moves(+ValidMoves)
- * Print each move in the list of valid moves.
- * ValidMoves - the list of valid moves for a pawn given
+ * Print each move in the list of all valid moves.
+ * ValidMoves - the list of all valid moves
  */
 print_moves([]) :-
     write('No valid moves available.').
     
-print_moves(Moves) :-
-    write('Valid Moves:\n'),
-    print_moves_list(Moves, 0).
+print_moves(ValidMoves) :-
+    write('\nAll Valid Moves:\n'),
+    print_moves_list(ValidMoves, 0).
 
 /**
  * print_moves_list(+ValidMoves, +Index)
+ * Print each move in the list of all valid moves.
+ * ValidMoves - the list of all valid moves 
+ * Index - the index (in the list) to the current move being printed
+ */
+print_moves_list([], _Index).
+print_moves_list([pawn(Row, Col)-coords(NewRow, NewCol) | Rest], Index) :-
+    letter(Row,Letter),
+    letter(NewRow,Letter1),
+    format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Index, Letter, Col, Letter1, NewCol]),
+    Index1 is Index + 1,
+    print_moves_list(Rest, Index1).
+
+/**
+ * print_moves_pawn(+ValidMoves)
+ * Print each move in the list of valid moves.
+ * ValidMoves - the list of valid moves for a pawn given
+ */
+print_moves_pawn([]) :-
+    write('\nNo valid moves available.\n').
+    
+print_moves_pawn(ValidMoves) :-
+    write('\nValid Moves for selected pawn:\n'),
+    pawn_print_moves_list(ValidMoves, 0).
+
+/**
+ * pawn_print_moves_list(+ValidMoves, +Index)
  * Print each move in the list of valid moves.
  * ValidMoves - the list of valid moves for a pawn given
  * Index - the index (in the list) to the current move being printed
  */
-print_moves_list([], _Index).
-print_moves_list([coords(Row, Col) | Rest], Index) :-
+pawn_print_moves_list([], _Index).
+pawn_print_moves_list([coords(Row, Col) | Rest], Index) :-
     letter(Row,Letter),
     format(' ~w. -> Row: ~w | Col: ~w ~n', [Index, Letter, Col]),
     Index1 is Index + 1,
-    print_moves_list(Rest, Index1).
+    pawn_print_moves_list(Rest, Index1).
 
 
 /**
@@ -215,6 +312,26 @@ is_pawn_blue(Board, Row, Col) :-
       getValueFromBoard(Board, Row, Col, blueGoal).
 
 /**
+ * get_green_pawn(+Board, -Row, -Col)
+ * Retrieves a green pawn from the board
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+get_green_pawn(Board, Row, Col) :-  
+      getIndexFromBoard(Board, Row, Col, green).
+
+/**
+ * get_blue_pawn(+Board, -Row, -Col)
+ * Retrieves a blue pawn from the board
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+get_blue_pawn(Board, Row, Col) :-  
+      getIndexFromBoard(Board, Row, Col, blue).
+
+/**
  * green_player_turn(+Gamestate, +Player, -NewGamestate)
  * Handles green player's turn (player)
  * Gamestate - current gamestate
@@ -224,9 +341,11 @@ is_pawn_blue(Board, Row, Col) :-
 green_player_turn(Gamestate, 'P', NewGamestate) :-
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(Gamestate),
+      valid_moves(Gamestate, 'P', ListOfMoves),
+      print_moves(ListOfMoves),
       choose_pawn(Gamestate, GreenPawn),
-      valid_moves(Gamestate, GreenPawn, ValidMoves),
-      print_moves(ValidMoves),
+      valid_moves_pawn(Gamestate, GreenPawn, ValidMoves),
+      print_moves_pawn(ValidMoves),
       choose_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
       move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
 
@@ -240,9 +359,11 @@ green_player_turn(Gamestate, 'P', NewGamestate) :-
 green_player_turn(Gamestate, 'C', NewGamestate) :-
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(Gamestate),
+      valid_moves(Gamestate, 'C', ListOfMoves),
+      print_moves(ListOfMoves),
       choose_random_pawn(Gamestate, GreenPawn),
-      valid_moves(Gamestate, GreenPawn, ValidMoves),
-      print_moves(ValidMoves),
+      valid_moves_pawn(Gamestate, GreenPawn, ValidMoves),
+      print_moves_pawn(ValidMoves),
       choose_random_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
       move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
 
@@ -257,9 +378,11 @@ green_player_turn(Gamestate, 'C', NewGamestate) :-
 blue_player_turn(Gamestate, 'P', NewGamestate) :-
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(Gamestate),
+      valid_moves(Gamestate, 'P', ListOfMoves),
+      print_moves(ListOfMoves),
       choose_pawn(Gamestate, BluePawn),
-      valid_moves(Gamestate, BluePawn, ValidMoves),
-      print_moves(ValidMoves),
+      valid_moves_pawn(Gamestate, BluePawn, ValidMoves),
+      print_moves_pawn(ValidMoves),
       choose_move(Gamestate, BluePawn, ValidMoves, NewCoords),
       move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
 
@@ -273,9 +396,11 @@ blue_player_turn(Gamestate, 'P', NewGamestate) :-
 blue_player_turn(Gamestate, 'C', NewGamestate) :-
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(Gamestate),
+      valid_moves(Gamestate, 'P', ListOfMoves),
+      print_moves(ListOfMoves),
       choose_random_pawn(Gamestate, BluePawn),
-      valid_moves(Gamestate, BluePawn, ValidMoves),
-      print_moves(ValidMoves),
+      valid_moves_pawn(Gamestate, BluePawn, ValidMoves),
+      print_moves_pawn(ValidMoves),
       choose_random_move(Gamestate, BluePawn, ValidMoves, NewCoords),
       move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
 

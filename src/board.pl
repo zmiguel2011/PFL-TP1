@@ -11,7 +11,11 @@ default_board_create(Board) :- board_create(5, Board).
  * Create board with size N.
  */
 board_create(N, Board) :-
-    board_create(N, 1, Board).
+    board_create(N, 1, Board1),
+    replaceInBoard(Board1, 1, 1, greenGoal, Board2),        % updates greenGoal cell 
+    replaceInBoard(Board2, N, N, blueGoal, Board3),   % updates blueGoal cell 
+    replaceInBoard(Board3, 1, N, inaccessible, Board4),  % updates inaccessible cell #1
+    replaceInBoard(Board4, N, 1, inaccessible, Board).   % updates inaccessible cell #2
 
 /**
  * board_create(+N, +R, -Board)

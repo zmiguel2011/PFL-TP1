@@ -26,6 +26,25 @@ getValueFromList([_H|T], Index, Value) :-
         Index1 is Index - 1,
         getValueFromList(T, Index1, Value).
 
+
+getIndexFromRow([Value|_], 1, Value). % We found the value
+getIndexFromRow([_|T], Index, Value):-
+  getIndexFromRow(T, Index1, Value), % Check in the tail of the row
+  Index is Index1 + 1.  % and increment the resulting index
+
+
+/**
+ * getValueFromBoard(+Board, +Row, +Col, -Value)
+ * 
+ * Retrieves row from Board for a given Value.
+ */
+getIndexFromBoard([H|_T], 1, Col, Value) :-
+        getIndexFromRow(H, Col, Value).
+
+getIndexFromBoard([_Value|T], Row, Col, Value) :-
+        getIndexFromBoard(T, Row1, Col, Value),
+        Row is Row1 + 1.
+
 /**
  * getValueFromRow(+Row, +Index, -Value)
  * 
