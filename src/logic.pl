@@ -343,11 +343,11 @@ green_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       valid_moves(Gamestate, 'P', ListOfMoves),
       print_moves(ListOfMoves),
-      choose_pawn(Gamestate, GreenPawn),
-      valid_moves_pawn(Gamestate, GreenPawn, ValidMoves),
+      choose_pawn(Gamestate, Pawn),
+      valid_moves_pawn(Gamestate, Pawn, ValidMoves),
       print_moves_pawn(ValidMoves),
-      choose_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
-      move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
+      choose_move(Gamestate, Pawn, ValidMoves, NewCoords),
+      move(Gamestate, move(Pawn, NewCoords), NewGamestate).
 
 /**
  * green_player_turn(+Gamestate, +Player, -NewGamestate)
@@ -361,11 +361,8 @@ green_player_turn(Gamestate, 'C', NewGamestate) :-
       display_game(Gamestate),
       valid_moves(Gamestate, 'C', ListOfMoves),
       print_moves(ListOfMoves),
-      choose_random_pawn(Gamestate, GreenPawn),
-      valid_moves_pawn(Gamestate, GreenPawn, ValidMoves),
-      print_moves_pawn(ValidMoves),
-      choose_random_move(Gamestate, GreenPawn, ValidMoves, NewCoords),
-      move(Gamestate, move(GreenPawn, NewCoords), NewGamestate).
+      choose_random_move(Gamestate, ListOfMoves, Pawn, NewCoords),
+      move(Gamestate, move(Pawn, NewCoords), NewGamestate).
 
 
 /**
@@ -380,11 +377,11 @@ blue_player_turn(Gamestate, 'P', NewGamestate) :-
       display_game(Gamestate),
       valid_moves(Gamestate, 'P', ListOfMoves),
       print_moves(ListOfMoves),
-      choose_pawn(Gamestate, BluePawn),
-      valid_moves_pawn(Gamestate, BluePawn, ValidMoves),
+      choose_pawn(Gamestate, Pawn),
+      valid_moves_pawn(Gamestate, Pawn, ValidMoves),
       print_moves_pawn(ValidMoves),
-      choose_move(Gamestate, BluePawn, ValidMoves, NewCoords),
-      move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
+      choose_move(Gamestate, Pawn, ValidMoves, NewCoords),
+      move(Gamestate, move(Pawn, NewCoords), NewGamestate).
 
 /**
  * blue_player_turn(+Gamestate, +Player, -NewGamestate)
@@ -396,13 +393,10 @@ blue_player_turn(Gamestate, 'P', NewGamestate) :-
 blue_player_turn(Gamestate, 'C', NewGamestate) :-
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(Gamestate),
-      valid_moves(Gamestate, 'P', ListOfMoves),
+      valid_moves(Gamestate, 'C', ListOfMoves),
       print_moves(ListOfMoves),
-      choose_random_pawn(Gamestate, BluePawn),
-      valid_moves_pawn(Gamestate, BluePawn, ValidMoves),
-      print_moves_pawn(ValidMoves),
-      choose_random_move(Gamestate, BluePawn, ValidMoves, NewCoords),
-      move(Gamestate, move(BluePawn, NewCoords), NewGamestate).
+      choose_random_move(Gamestate, ListOfMoves, Pawn, NewCoords),
+      move(Gamestate, move(Pawn, NewCoords), NewGamestate).
 
 
 /**

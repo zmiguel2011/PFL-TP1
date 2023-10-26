@@ -24,18 +24,18 @@ choose_random_pawn(gamestate(Board, P), pawn(Row,Col)):-
 
 
 /**
- * choose_random_move(+Gamestate, +Pawn, +ValidMoves, -NewCoords)
+ * choose_random_move(+Gamestate, +ValidMoves, -Pawn, -NewCoords)
  * Chooses a random move for the bot to make from the valid_moves list.
  * Pawn - the pawn to move -> pawn(Row, Col)
  * Gamestate - current gamestate
  * ValidMoves - list of valid moves
  * NewCoords - new coordinates for the pawn
  */
-choose_random_move(Gamestate, Pawn, ValidMoves, NewCoords):-
+choose_random_move(Gamestate, ValidMoves, Pawn, NewCoords):-
     length(ValidMoves, L),
     L1 is L - 1,
     repeat,
     random(0, L, Index),
     Index >= 0, Index =< L1,
     !,
-    getValueFromList(ValidMoves, Index, NewCoords).
+    getValueFromList(ValidMoves, Index, Pawn-NewCoords).
