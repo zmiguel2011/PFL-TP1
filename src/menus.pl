@@ -10,7 +10,7 @@ manage_input(1) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('P','P', Size).
+    start_game('P','P', Size, _).
 
 manage_input(2) :-
     repeat,
@@ -18,7 +18,13 @@ manage_input(2) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('P','C', Size).
+    repeat,
+    display_choose_level,
+    nl, write(' > Level: '), 
+    read(Level),
+    validate_level(Level),  % backtrack to repeat
+    !,  % when input is valid, cut!, we won't backtrack to repeat anymore
+    start_game('P','C', Size, Level).
 
 manage_input(3) :-
     repeat,
@@ -26,7 +32,13 @@ manage_input(3) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','P', Size).
+    repeat,
+    display_choose_level,
+    nl, write(' > Level: '), 
+    read(Level),
+    validate_level(Level),  % backtrack to repeat
+    !,  % when input is valid, cut!, we won't backtrack to repeat anymore
+    start_game('C','P', Size, Level).
 
 manage_input(4) :-
     repeat,
@@ -34,7 +46,7 @@ manage_input(4) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','C', Size).
+    start_game('C','C', Size, _).
 
 manage_input(5) :-
     print_instructions,
@@ -71,6 +83,15 @@ go_back(_Option) :-
  */
 validate_size(Size):- Size >= 5, Size =< 10.
 validate_size(Size):- (Size < 5; Size > 10), !, write('\nERROR: Size is invalid.\n\n'), fail.
+
+
+/**
+ * validate_level(+Level)
+ * 
+ * Validadates the level received. 
+ */
+validate_level(Level):- Level >= 1, Level =< 2.
+validate_level(Level):- (Level < 1; Level > 2), !, write('\nERROR: Level is invalid.\n\n'), fail.
 
 /**
  * print_main_menu
@@ -134,6 +155,18 @@ choose_menu_option :-
 choose_board_size :-
     write('\n Please input the desired board size for the game. The size must be an integer between 5 and 10. (eg. 5, default is 5x5)\n'),
     write('  > Size: ').
+
+
+/*
+ * display_choose_level
+ *
+ * Displays computer A.I. levels.
+*/
+display_choose_level :-
+    nl,
+    format("1. Level 1~n", []),
+    format("2. Level 2~n", []),
+    format("0. Back~n~n", []).
 
 /**
  * print_instructions
