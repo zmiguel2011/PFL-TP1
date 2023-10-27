@@ -1,7 +1,7 @@
 /**
- * choose_random_pawn(+Gamestate, -Pawn)
+ * choose_random_pawn(+GameState, -Pawn)
  * Chooses a random pawn for the bot to move
- * Gamestate - current gamestate
+ * GameState - current gamestate
  * Pawn - used to store the choosen pawn
  */
 choose_random_pawn(gamestate(Board, P), pawn(Row,Col)):- 
@@ -24,14 +24,14 @@ choose_random_pawn(gamestate(Board, P), pawn(Row,Col)):-
 
 
 /**
- * choose_random_move(+Gamestate, +ValidMoves, -Pawn, -NewCoords)
+ * choose_random_move(+GameState, +ValidMoves, -Pawn, -NewCoords)
  * Chooses a random move for the bot to make from the valid_moves list.
  * Pawn - the pawn to move -> pawn(Row, Col)
- * Gamestate - current gamestate
+ * GameState - current gamestate
  * ValidMoves - list of valid moves
  * NewCoords - new coordinates for the pawn
  */
-choose_random_move(Gamestate, ValidMoves, Pawn, NewCoords):-
+choose_random_move(GameState, ValidMoves, Pawn, NewCoords):-
     length(ValidMoves, L),
     L1 is L - 1,
     repeat,
