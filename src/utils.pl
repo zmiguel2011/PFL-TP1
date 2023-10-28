@@ -1,10 +1,18 @@
 /**
  * not(+X)
  * 
- * Negates X;
+ * Negates X.
  */
 not(X):- X, !, fail.
 not(_X).
+
+/**
+ * absolute(+X, -Y)
+ * 
+ * Stores in Y the aboslute value of X.
+ */
+absolute(X,X) :- X >= 0, !.
+absolute(X,Y) :- Y is -X.
 
 /**
  * if_then_else(If, Then, _Else)
@@ -14,19 +22,35 @@ not(_X).
 if_then_else(If, Then, _Else):- If, !, Then. 
 if_then_else(_If, _Then, Else):- Else.
 
+
+/**
+ * between(+L, +R, ?I)
+ * 
+ * If I is binded, it checks if L =< I =< R.
+ * If I is not binded, it is successively assigned
+ * to the integers between L and R inclusive.
+ */
+between(L, R, I) :- ground(I), !, L =< I, I =< R.
+between(L, L, I) :- I is L, !.
+between(L, R, I) :- L < R, I is L.
+between(L, R, I) :- L < R, L1 is L+1, between(L1, R, I).
+
 /**
  * getValueFromList(+List, +Index, -Value)
  * 
  * Retrieves value from List at given index.
  */
-
 getValueFromList([Value|_T], 0, Value).
 getValueFromList([_H|T], Index, Value) :-
         Index > 0,
         Index1 is Index - 1,
         getValueFromList(T, Index1, Value).
 
-
+/**
+ * getIndexFromRow(+Row, +Index, -Value)
+ * 
+ * Retrieves value from Row at given index.
+ */
 getIndexFromRow([Value|_], 1, Value). % We found the value
 getIndexFromRow([_|T], Index, Value):-
   getIndexFromRow(T, Index1, Value), % Check in the tail of the row
@@ -101,14 +125,12 @@ ignore_newlines :-
     ((Char == '\n', get_char(_)) ; (Char == end_of_file ; Char \= '\n')),
     !.
 
+
 /**
- * between(+L, +R, ?I)
+ * orthogonal_distance(+X1, +Y1, +X2, +Y2, -D)
  * 
- * If I is binded, it checks if L =< I =< R.
- * If I is not binded, it is successively assigned
- * to the integers between L and R inclusive.
+ * Stores in D the absolute value of the distance between (X1, Y1) and (X2, Y2)
  */
-between(L, R, I) :- ground(I), !, L =< I, I =< R.
-between(L, L, I) :- I is L, !.
-between(L, R, I) :- L < R, I is L.
-between(L, R, I) :- L < R, L1 is L+1, between(L1, R, I).
+orthogonal_distance(X1, Y1, X2, Y2, D) :-
+    D1 is (X1 - X2 + Y1 - Y2),
+    absolute(D1, D).

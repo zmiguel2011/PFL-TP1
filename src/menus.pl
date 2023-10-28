@@ -10,7 +10,7 @@ manage_input(1) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('P','P', Size, _).
+    start_game('H','H', Size, _).
 
 manage_input(2) :-
     repeat,
@@ -24,7 +24,7 @@ manage_input(2) :-
     read(Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('P','C', Size, Level).
+    start_game('H','C', Size, Level).
 
 manage_input(3) :-
     repeat,
@@ -38,7 +38,7 @@ manage_input(3) :-
     read(Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','P', Size, Level).
+    start_game('C','H', Size, Level).
 
 manage_input(4) :-
     repeat,
@@ -116,11 +116,11 @@ print_main_menu :-
     write('|               -----------------------------------------               |'),nl,
     write('|                                                                       |'),nl,
     write('|                                                                       |'),nl,
-    write('|                          1. Player vs Player                          |'),nl,
+    write('|                          1. Human vs Human                            |'),nl,
     write('|                                                                       |'),nl,
-    write('|                          2. Player vs Computer                        |'),nl,
+    write('|                          2. Human vs Computer                         |'),nl,
     write('|                                                                       |'),nl,
-	write('|                          3. Computer vs Player                        |'),nl,
+	write('|                          3. Computer vs Human                         |'),nl,
     write('|                                                                       |'),nl,
 	write('|                          4. Computer vs Computer                      |'),nl,
     write('|                                                                       |'),nl,                                                   
