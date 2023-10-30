@@ -4,10 +4,12 @@
 :- consult('logic.pl').
 :- consult('input.pl').
 :- consult('bot.pl').
+:- consult('value.pl').
 :- consult('utils.pl').
 :- use_module(library(system)).
 :- use_module(library(lists)).
 :- use_module(library(random)).
+:- use_module(library(aggregate)).
 
 play :-
       main_menu.

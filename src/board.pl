@@ -1,3 +1,31 @@
+initialBoard([
+[greenGoal,blue,blue,empty,inaccessible],
+[blue,empty,empty,empty,empty],
+[blue,empty,empty,empty,green],
+[empty,empty,empty,empty,green],
+[inaccessible,empty,green,green,blueGoal]
+]).
+
+
+intermediateBoard([
+[greenGoal,blue,empty,empty,inaccessible],
+[blue,empty,empty,empty,empty],
+[empty,empty,blue,green,empty],
+[green,empty,empty,empty,green],
+[inaccessible,blue,empty,green,blueGoal]
+]).
+
+
+finalBoard([
+[greenGoal,blue,empty,empty,inaccessible],
+[blue,empty,green,empty,empty],
+[empty,empty,empty,green,empty],
+[green,empty,empty,empty,blue],
+[inaccessible,blue,empty,green,blueGoal]
+]).
+
+
+
 /**
  * board_create(-Board)
  * 
@@ -87,4 +115,20 @@ initial_state(Size, gamestate(Board, _P)) :-
     replaceInBoard(Board2, Size, Size, blueGoal, Board3),   % updates blueGoal cell 
     replaceInBoard(Board3, 1, Size, inaccessible, Board4),  % updates inaccessible cell #1
     replaceInBoard(Board4, Size, 1, inaccessible, Board).   % updates inaccessible cell #2
-    %initial_board(Board).
+
+
+/**
+ * intermediate_state(-GameState) 
+ * gameState(Board, Turn)
+ * 
+ * Sets up intermediate game state.
+ */
+intermediate_state(gamestate(Board, _P)) :- intermediateBoard(Board).
+
+/**
+ * final_state(-GameState) 
+ * gameState(Board, Turn)
+ * 
+ * Sets up final game state.
+ */
+final_state(gamestate(Board, _P)) :- finalBoard(Board).
