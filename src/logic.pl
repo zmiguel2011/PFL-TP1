@@ -5,7 +5,7 @@
  * Pawn - the pawn given
  * NewCoords - new (possible) coordinates for the pawn given
  */
-valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 1)
       is_pawn_green(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -27,14 +27,7 @@ valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
             )
       ).
 
-/**
- * valid_move_pawn(+GameState, +Pawn, -NewCoords) (Player 2)
- * Validate or return possible NewCoords for a given pawn
- * GameState - current gamestate
- * Pawn - the pawn given
- * NewCoords - new (possible) coordinates for the pawn given
- */
-valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 2)
       is_pawn_blue(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -57,13 +50,13 @@ valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
       ).
 
  /**
- * valid_move(+GameState, -Pawn, -NewCoords) (Player 1)
+ * valid_move(+GameState, -Pawn, -NewCoords)
  * Return possible a pawn and possible NewCoords for it to move to
  * GameState - current gamestate
  * Pawn - the pawn returned
  * NewCoords - new (possible) coordinates for the pawn returned
  */
-valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
+valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 1)
       get_green_pawn(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -85,14 +78,8 @@ valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):-
             )
       ).
 
- /**
- * valid_move(+GameState, -Pawn, -NewCoords) (Player 2)
- * Return possible a pawn and possible NewCoords for it to move to
- * GameState - current gamestate
- * Pawn - the pawn returned
- * NewCoords - new (possible) coordinates for the pawn returned
- */
-valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):-
+
+valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 2)
       get_blue_pawn(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -234,20 +221,12 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
  * Player - the player
  * Move - move for the player to make
  */
-choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)):- % (PLAYER)
+choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)):- % (HUMAN)
       choose_pawn(GameState, Pawn),
       valid_moves_pawn(GameState, Pawn, ValidMoves),
       print_moves_pawn(ValidMoves),
       choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords).
 
-
-/**
- * choose_move(+GameState, +Player, +Level, -Move)
- * Chooses a move for the bot to make based on the level chosen. (LEVEL 1)
- * GameState - current gamestate
- * Player - the player
- * Move - move for the player to make
- */
 choose_move(GameState, 'C', 1, move(Pawn, NewCoords)):- % (COMMPUTER)
     valid_moves(GameState, Player, ListOfMoves),
     choose_random_move(GameState, ListOfMoves, Pawn, NewCoords).
@@ -358,7 +337,7 @@ is_pawn_blue(Board, Row, Col) :-
  * Row - row to search for
  * Col - col to search for
  */
- is_blue_goal(Board, Row, Col) :- % 
+ is_blue_goal(Board, Row, Col) :- 
       getValueFromBoard(Board, Row, Col, blueGoal).
 
 /**
@@ -388,20 +367,13 @@ get_blue_pawn(Board, Row, Col) :-
  * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
  * NewGameState - new gamestate
  */
-green_player_turn(GameState, 'H', Level, NewGameState) :- % (PLAYER)
+green_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
       choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)),
       print_chosen_move(Pawn, NewCoords),
       move(GameState, move(Pawn, NewCoords), NewGameState).
 
-/**
- * green_player_turn(+GameState, +Player, +Level, -NewGameState)
- * Handles green player's turn (computer)
- * GameState - current gamestate
- * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
- * NewGameState - new gamestate
- */
 green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
@@ -418,20 +390,13 @@ green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
  * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
  * NewGameState - new gamestate
  */
-blue_player_turn(GameState, 'H', Level, NewGameState) :- % (PLAYER)
+blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
       choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)),
       print_chosen_move(Pawn, NewCoords),
       move(GameState, move(Pawn, NewCoords), NewGameState).
 
-/**
- * blue_player_turn(+GameState, +Player, +Level, -NewGameState)
- * Handles blue player's turn (computer)
- * GameState - current gamestate
- * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
- * NewGameState - new gamestate
- */
 blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
@@ -468,21 +433,14 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
  * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
  * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
  */
-game_loop(gamestate(Board, 1), Player1, Player2, Level) :-
+game_loop(gamestate(Board, 1), Player1, Player2, Level) :- % Player 1
       green_player_turn(gamestate(Board, 1), Player1, Level, gamestate(NewBoard, 1)),
       (
             game_over(gamestate(NewBoard, 1), _Winner);
             game_loop(gamestate(NewBoard, 2), Player1, Player2, Level)
       ).
 
-/**
- * game_loop(+GameState, +Player1, +Player2)
- * main game function, waits for player 2 (blue) to move and then checks gamestate
- * GameState - current gamestate
- * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
- * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
- */
-game_loop(gamestate(Board, 2), Player1, Player2, Level) :-
+game_loop(gamestate(Board, 2), Player1, Player2, Level) :- % Player 2
       blue_player_turn(gamestate(Board, 2), Player2, Level, gamestate(NewBoard, 2)),
       (
             game_over(gamestate(NewBoard, 2), _Winner);
