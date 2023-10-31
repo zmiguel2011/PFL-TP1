@@ -1,0 +1,98 @@
+/**
+ * choose_move(+GameState, +Player, +Level, -Move)
+ * Chooses a move for the player to make.
+ * GameState - current gamestate
+ * Player - the player
+ * Move - move for the player to make
+ */
+choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)):- % (HUMAN)
+      choose_pawn(GameState, Pawn),
+      valid_moves_pawn(GameState, Pawn, ValidMoves),
+      print_moves_pawn(ValidMoves),
+      choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords).
+
+choose_move(GameState, 'C', 1, Move):- % (COMMPUTER - LEVEL 1)
+    valid_moves(GameState, _Player, ListOfMoves),
+    choose_random_move(GameState, ListOfMoves, Move).
+
+choose_move(GameState, 'C', 2, Move):- % (COMMPUTER - LEVEL 2)
+    valid_moves(GameState, _Player, ListOfMoves),
+    best_move(GameState, ListOfMoves, Move, _Value).
+
+
+
+/**
+ * choose_random_move(+GameState, +ValidMoves, -Move)
+ *
+ * Chooses a random move for the bot to make from the valid_moves list.
+ * Pawn - the pawn to move -> pawn(Row, Col)
+ * GameState - current gamestate(Board, Turn)
+ * ValidMoves - list of valid moves
+ * NewCoords - new coordinates for the pawn
+ */
+choose_random_move(GameState, ValidMoves, Move):-
+    length(ValidMoves, L),
+    L1 is L - 1,
+    repeat,
+    random(0, L, Index),
+    Index >= 0, Index =< L1,
+    !,
+    getValueFromList(ValidMoves, Index, Move).
+
+/**
+ * best_move(+GameState, +ListOfMoves, -Move, -Value)
+ * 
+ * Choose best move from list.
+ * GameState - current gamestate(Board, Turn)
+ * ListOfMoves - list of valid moves
+ * Move - the best move
+ * Value - the value of the best move
+ */
+best_move(GameState, ListOfMoves, Move, Value) :-
+    bagof(Value-Move, (member(Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
+    min_member(Value-Move, ListOfMovesPairs).
+
+
+/**
+ * get_move_value(+GameState, +Move, -Value)
+ * 
+ * Gets value of board after performing Move, and returns a value corresponding to the move made.
+ * GameState - current gamestate(Board, Turn)
+ * Move - valid move
+ * Value - value of the move
+ */
+get_move_value(gamestate(Board, 1), Move, Value) :- 
+    move(gamestate(Board, 1), Move, NewGameState),
+    value_green(NewGameState, Value).
+
+get_move_value(gamestate(Board, 2), Move, Value) :- 
+    move(gamestate(Board, 2), Move, NewGameState),
+    value_blue(NewGameState, Value).
+
+
+/**
+ * choose_random_pawn(+GameState, -Pawn)
+ *
+ * Chooses a random pawn for the bot to move. 
+ * This function was implemented in the early stages of the game for testing purposes.
+ * GameState - current gamestate(Board, Turn)
+ * Pawn - used to store the choosen pawn
+ */
+choose_random_pawn(gamestate(Board, Turn), pawn(Row,Col)):- 
+    repeat,
+    random(1, 10, Row),
+    random(1, 10, Col),
+    if_then_else(
+        Turn == 1,            % if P is Player 1 (green)
+        if_then_else(      % then check if a valid green pawn was choosen
+            not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
+            fail, % then it is an invalid choice
+            format('~nComputer has choosen a pawn: (~d, ~d)~n',[Row, Col]) % else, proceed
+        ),
+        if_then_else(      % else check if a valid blue pawn was choosen
+            not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
+            fail, %  then it is an invalid choice
+            format('~nComputer has choosen a pawn: (~d, ~d)~n',[Row, Col]) % else, proceed
+        )
+    ).
+

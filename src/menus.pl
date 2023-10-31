@@ -46,7 +46,13 @@ manage_input(4) :-
     read(Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','C', Size, _).
+    repeat,
+    display_choose_level,
+    nl, write(' > Level: '), 
+    read(Level),
+    validate_level(Level),  % backtrack to repeat
+    !,  % when input is valid, cut!, we won't backtrack to repeat anymore
+    start_game('C','C', Size, Level).
 
 manage_input(5) :-
     print_instructions,

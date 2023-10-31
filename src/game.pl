@@ -3,7 +3,7 @@
 :- consult('display.pl').
 :- consult('logic.pl').
 :- consult('input.pl').
-:- consult('bot.pl').
+:- consult('choose_move.pl').
 :- consult('value.pl').
 :- consult('utils.pl').
 :- use_module(library(system)).

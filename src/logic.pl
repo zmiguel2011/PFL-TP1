@@ -120,7 +120,7 @@ valid_moves_pawn(GameState, Pawn, ListOfMoves):-
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves(gamestate(Board, P), Player, ListOfMoves):-
-      bagof(Pawn-NewCoords, valid_move(gamestate(Board, P), Pawn, NewCoords), ListOfMoves).
+      bagof(move(Pawn,NewCoords), valid_move(gamestate(Board, P), Pawn, NewCoords), ListOfMoves).
 
 
 /**
@@ -142,7 +142,7 @@ print_moves(ValidMoves) :-
  * Index - the index (in the list) to the current move being printed
  */
 print_moves_list([], _Index).
-print_moves_list([pawn(Row, Col)-coords(NewRow, NewCol) | Rest], Index) :-
+print_moves_list([move( pawn(Row, Col), coords(NewRow, NewCol) )| Rest], Index) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
     format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Index, Letter, Col, NewLetter, NewCol]),
@@ -175,12 +175,13 @@ pawn_print_moves_list([coords(Row, Col) | Rest], Index) :-
     pawn_print_moves_list(Rest, Index1).
 
 /**
- * print_chosen_move(+Pawn, +NewCoords)
+ * print_chosen_move(+Move)
  * Print each move in the of valid moves.
+ * Move - the move to print -> move(Pawn, NewCoords)
  * Pawn - the pawn to move -> pawn(Row, Col)
  * NewCoords - new coordinates for the pawn -> coords(Row, Col)
  */
- print_chosen_move(pawn(Row, Col), coords(NewRow, NewCol)) :-
+ print_chosen_move(move( pawn(Row, Col), coords(NewRow, NewCol) )) :-
       letter(Row, Letter),
       letter(NewRow, NewLetter),
       format('~n > Chosen Move - Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Letter, Col, NewLetter, NewCol]).
@@ -212,37 +213,6 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
                   nl % else, proceed
             )
       ).
-
-
-/**
- * choose_move(+GameState, +Player, +Level, -Move)
- * Chooses a move for the player to make.
- * GameState - current gamestate
- * Player - the player
- * Move - move for the player to make
- */
-choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)):- % (HUMAN)
-      choose_pawn(GameState, Pawn),
-      valid_moves_pawn(GameState, Pawn, ValidMoves),
-      print_moves_pawn(ValidMoves),
-      choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords).
-
-choose_move(GameState, 'C', 1, move(Pawn, NewCoords)):- % (COMMPUTER)
-    valid_moves(GameState, Player, ListOfMoves),
-    choose_random_move(GameState, ListOfMoves, Pawn, NewCoords).
-
-
-/**
- * choose_move(+GameState, +Player, +Level, -Move)
- * Chooses a move for the bot to make based on the level chosen. (LEVEL 2)
- * GameState - current gamestate
- * Player - the player
- * Move - move for the player to make
- */
- /* TODO: BOT LEVEL 2
- choose_move(GameState, Player, 2, move(Pawn, NewCoords)):- % (COMMPUTER)
-    valid_moves(GameState, Player, ListOfMoves),
-*/
 
 
 /**
@@ -362,7 +332,7 @@ get_blue_pawn(Board, Row, Col) :-
 
 /**
  * green_player_turn(+GameState, +Player, +Level, -NewGameState)
- * Handles green player's turn (player)
+ * Handles green player's turn
  * GameState - current gamestate
  * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
  * NewGameState - new gamestate
@@ -370,22 +340,22 @@ get_blue_pawn(Board, Row, Col) :-
 green_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)),
-      print_chosen_move(Pawn, NewCoords),
-      move(GameState, move(Pawn, NewCoords), NewGameState).
+      choose_move(GameState, 'H', _Level, Move),
+      print_chosen_move(Move),
+      move(GameState, Move, NewGameState).
 
 green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
       valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, move(Pawn, NewCoords)),
-      print_chosen_move(Pawn, NewCoords),
-      move(GameState, move(Pawn, NewCoords), NewGameState).
+      choose_move(GameState, 'C', Level, Move),
+      print_chosen_move(Move),
+      move(GameState, Move, NewGameState).
 
 
 /**
  * blue_player_turn(+GameState, +Player, +Level, -NewGameState)
- * Handles blue player's turn (player)
+ * Handles blue player's turn
  * GameState - current gamestate
  * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
  * NewGameState - new gamestate
@@ -393,17 +363,17 @@ green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
 blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)),
-      print_chosen_move(Pawn, NewCoords),
-      move(GameState, move(Pawn, NewCoords), NewGameState).
+      choose_move(GameState, 'H', _Level, Move),
+      print_chosen_move(Move),
+      move(GameState, Move, NewGameState).
 
 blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
       valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, move(Pawn, NewCoords)),
-      print_chosen_move(Pawn, NewCoords),
-      move(GameState, move(Pawn, NewCoords), NewGameState).
+      choose_move(GameState, 'C', Level, Move),
+      print_chosen_move(Move),
+      move(GameState, Move, NewGameState).
 
 
 /**
@@ -420,7 +390,8 @@ game_over(gamestate(Board, Winner), Winner):-
 /**
  * checkVictory(+Board, +Player)
  * Checks if the player has reached their goal
- * GameState - current gamestate
+ * Board - current board
+ * Player - current player
  */
 checkVictory(Board, 1):- is_pawn_green(Board, 1, 1).
 checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
@@ -428,26 +399,34 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
 
 /**
  * game_loop(+GameState, +Player1, +Player2)
- * Main game function, waits for player 1 (green) to move and then checks gamestate
- * GameState - current gamestate
+ * Main game function, waits for player to make a move, checks gamestate and changes turn or ends game
+ * GameState - current gamestate(Board, Turn)
  * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
  * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
  */
-game_loop(gamestate(Board, 1), Player1, Player2, Level) :- % Player 1
+game_loop(gamestate(Board, 1), Player1, Player2, Level) :- % Player 1's Turn
       green_player_turn(gamestate(Board, 1), Player1, Level, gamestate(NewBoard, 1)),
       (
-            game_over(gamestate(NewBoard, 1), _Winner);
-            game_loop(gamestate(NewBoard, 2), Player1, Player2, Level)
+            game_over(gamestate(NewBoard, 1), _Winner); % check is the game is over
+            game_loop(gamestate(NewBoard, 2), Player1, Player2, Level) % else continue the game and change turn
       ).
 
-game_loop(gamestate(Board, 2), Player1, Player2, Level) :- % Player 2
+game_loop(gamestate(Board, 2), Player1, Player2, Level) :- % Player 2's Turn
       blue_player_turn(gamestate(Board, 2), Player2, Level, gamestate(NewBoard, 2)),
       (
-            game_over(gamestate(NewBoard, 2), _Winner);
-            game_loop(gamestate(NewBoard, 1), Player1, Player2, Level)
+            game_over(gamestate(NewBoard, 2), _Winner); % check is the game is over
+            game_loop(gamestate(NewBoard, 1), Player1, Player2, Level) % else continue the game and change turn
       ).
 
 
+/**
+ * start_game(+Player1, +Player2, +Size, +Level)
+ * Starts the game with the initial state and initiates the game loop.
+ * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
+ * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
+ * Size - size of the board (between 5 and 10)
+ * Level - level of the computer player (either 1 or 2)
+ */
 start_game(Player1, Player2, Size, Level):-
       initial_state(Size, GameState),
       game_loop(GameState, Player1, Player2, Level).
