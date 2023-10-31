@@ -7,6 +7,7 @@ Distributed under the terms of the GNU General Public License, version 3
 
 
 ## License
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 © 2023 José Miguel Isidro, José António Costa
 
@@ -19,7 +20,8 @@ Made available under [GNU General Public License v3](LICENSE), copyrighted mater
 
 ## Index 
 
-- [Installing and executing](#installing-and-executing)
+- [Identification of the topic and group](#identification-of-the-topic-and-group)
+- [Installation and Execution](#installation-and-execution)
   - [Installing](#installing)
   - [Executing](#executing)
 - [Description of the game](#description-of-the-game)
@@ -35,15 +37,28 @@ Made available under [GNU General Public License v3](LICENSE), copyrighted mater
 - [Bibliography](#bibliography)
 
 
-## Installing and executing
+## Identification of the topic and group
 
-### Installing
+- **Project name:** Claustro
+- **Short description:** Board game implemented in Prolog
+- **Group:** Claustro_2
+- **Group members:** 
+    - [José Miguel Moreira Isidro](https://github.com/zmiguel2011) (<up202006485@fe.up.pt>)
+    - [José António Santos Costa](https://github.com/JaySuave) (<up202004823@fe.up.pt>)
+- **Contribuition:** 
+    - José Miguel Moreira Isidro:
+    - José António Santos Costa:
+
+
+## Installation and Execution
+
+### Installation
 
 #### Requisites
 
 To run this game you need a running Prolog environment, preferably [SICStus Prolog 4.8](https://sicstus.sics.se/).
 
-### Executing
+### Execution
 
 ## Description of the game
 
@@ -58,7 +73,7 @@ To run this game you need a running Prolog environment, preferably [SICStus Prol
 
 ### List of valid moves
 
-### End game
+### End of game
 
 ### Game State Evaluation
 
