@@ -119,6 +119,77 @@ replaceInBoard([H|T], Row, Col, Value, [H|TNew]) :-
         Row1 is Row - 1,
         replaceInBoard(T, Row1, Col, Value, TNew).
 
+
+/**
+ * is_pawn_green(+Board, +Row, +Col)
+ * Checks if cell (Row, Column) is 'green' using the predicate getValueFromBoard (declared in utils.pl)
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+is_pawn_green(Board, Row, Col) :-  
+      getValueFromBoard(Board, Row, Col, green).
+
+/**
+ * is_pawn_blue(+Board, +Row, +Col)
+ * Checks if cell (Row, Column) is 'blue' using the predicate getValueFromBoard (declared in utils.pl)
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+is_pawn_blue(Board, Row, Col) :- 
+      getValueFromBoard(Board, Row, Col, blue).
+
+/**
+ * is_empty_cell(+Board, +Row, +Col)
+ * Checks if cell (Row, Column) is 'empty' using the predicate getValueFromBoard (declared in utils.pl)
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+ is_empty_cell(Board, Row, Col) :- 
+      getValueFromBoard(Board, Row, Col, empty).
+
+/**
+ * is_green_goal(+Board, +Row, +Col)
+ * Checks if cell (Row, Column) is 'greenGoal' using the predicate getValueFromBoard (declared in utils.pl)
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+ is_green_goal(Board, Row, Col) :- 
+      getValueFromBoard(Board, Row, Col, greenGoal).
+
+/**
+ * is_blue_goal(+Board, +Row, +Col)
+ * Checks if cell (Row, Column) is 'blueGoal' using the predicate getValueFromBoard (declared in utils.pl)
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+ is_blue_goal(Board, Row, Col) :- 
+      getValueFromBoard(Board, Row, Col, blueGoal).
+
+/**
+ * get_green_pawn(+Board, -Row, -Col)
+ * Retrieves a green pawn from the board
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+get_green_pawn(Board, Row, Col) :-  
+      getIndexFromBoard(Board, Row, Col, green).
+
+/**
+ * get_blue_pawn(+Board, -Row, -Col)
+ * Retrieves a blue pawn from the board
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+get_blue_pawn(Board, Row, Col) :-  
+      getIndexFromBoard(Board, Row, Col, blue).
+
 ignore_newlines :-
     repeat,
     peek_char(Char),  % Peek at the next character without consuming it
