@@ -5,7 +5,7 @@
  * Pawn - the pawn given
  * NewCoords - new (possible) coordinates for the pawn given
  */
-valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 1)
+valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol),Capture):- % (Player 1)
       is_pawn_green(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -17,17 +17,27 @@ valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol)):- % (Pla
                   (NewRow =:= Row - 1, NewCol =:= Col); % Left
                   (NewRow =:= Row, NewCol =:= Col + 1); % Down
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
-            );
+            ),
+            Capture is 0;
+            getValueFromBoard(Board,NewRow,NewCol,blue), % if cell is blue
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col + 1); % Down Right
+                  (NewRow =:= Row - 1, NewCol =:= Col + 1); % Up Right
+                  (NewRow =:= Row + 1, NewCol =:= Col - 1); % Down Left
+                  (NewRow =:= Row - 1, NewCol =:= Col - 1)  % Up Left
+            ),
+            Capture is 1;
             getValueFromBoard(Board,NewRow,NewCol,greenGoal), % checks if it is greenGoal
             (
                   (NewRow =:= Row + 1, NewCol =:= Col); % Right
                   (NewRow =:= Row - 1, NewCol =:= Col); % Left
                   (NewRow =:= Row, NewCol =:= Col + 1); % Down
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
-            )
+            ),
+            Capture is 0
       ).
 
-valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 2)
+valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol),Capture):- % (Player 2)
       is_pawn_blue(Board, Row, Col),
       length(Board,Max), %get the max boundary of the board
       between(1,Max,NewRow), %checks if new value is within the boundary of the board
@@ -39,14 +49,24 @@ valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):- % (Pla
                   (NewRow =:= Row - 1, NewCol =:= Col); % Left
                   (NewRow =:= Row, NewCol =:= Col + 1); % Down
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
-            );
+            ),
+            Capture = 0;
+            getValueFromBoard(Board,NewRow,NewCol,green), % if cell is green
+            (
+                  (NewRow =:= Row + 1, NewCol =:= Col + 1); % Down Right
+                  (NewRow =:= Row - 1, NewCol =:= Col + 1); % Up Right
+                  (NewRow =:= Row + 1, NewCol =:= Col - 1); % Down Left
+                  (NewRow =:= Row - 1, NewCol =:= Col - 1)  % Up Left
+            ),
+            Capture = 1;
             getValueFromBoard(Board,NewRow,NewCol,blueGoal), % checks if it is blueGoal
             (
                   (NewRow =:= Row + 1, NewCol =:= Col); % Right
                   (NewRow =:= Row - 1, NewCol =:= Col); % Left
                   (NewRow =:= Row, NewCol =:= Col + 1); % Down
                   (NewRow =:= Row, NewCol =:= Col - 1)  % Up
-            )
+            ),
+            Capture = 0
       ).
 
  /**
@@ -110,7 +130,7 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol)):- % (Player 2
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves_pawn(GameState, Pawn, ListOfMoves):-
-    findall(NewCoords, valid_move_pawn(GameState, Pawn, NewCoords), ListOfMoves).
+    findall((NewCoords,Capture), valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 
 /**
  * valid_moves(+GameState, +Player, -ListOfMoves)
@@ -134,9 +154,14 @@ valid_moves(gamestate(Board, P), Player, ListOfMoves):-
 green_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, Move),
+      choose_move(GameState, 'H', _Level, Move,Capture),
       print_chosen_move(Move),
-      move(GameState, Move, NewGameState).
+      move(GameState, Move, MoveGameState),
+      if_then_else(
+            Capture =:= 1,
+            manage_capture(MoveGameState,'H',Level,NewGameState),
+            NewGameState = MoveGameState
+      ).
 
 green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
@@ -157,9 +182,14 @@ green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
 blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, Move),
+      choose_move(GameState, 'H', _Level, Move,Capture),
       print_chosen_move(Move),
-      move(GameState, Move, NewGameState).
+      move(GameState, Move, MoveGameState),
+      if_then_else(
+            Capture =:= 1,
+            manage_capture(MoveGameState,'H',Level,NewGameState),
+            NewGameState = MoveGameState
+      ).
 
 blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),

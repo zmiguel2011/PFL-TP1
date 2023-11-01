@@ -35,6 +35,12 @@ print_moves_pawn([]) :-
 print_moves_pawn(ValidMoves) :-
     write('\nValid Moves for selected pawn:\n'),
     pawn_print_moves_list(ValidMoves, 0).
+/**
+*
+*/
+
+capture(0,' ').
+capture(1,'<- Capture').
 
 /**
  * pawn_print_moves_list(+ValidMoves, +Index)
@@ -43,9 +49,10 @@ print_moves_pawn(ValidMoves) :-
  * Index - the index (in the list) to the current move being printed
  */
 pawn_print_moves_list([], _Index).
-pawn_print_moves_list([coords(Row, Col) | Rest], Index) :-
+pawn_print_moves_list([(coords(Row, Col),Capture) | Rest], Index) :-
     letter(Row,Letter),
-    format(' ~w. -> Row: ~w | Col: ~w ~n', [Index, Letter, Col]),
+    capture(Capture,CaptureString),
+    format(' ~w. -> Row: ~w | Col: ~w ~w ~n', [Index, Letter, Col,CaptureString]),
     Index1 is Index + 1,
     pawn_print_moves_list(Rest, Index1).
 

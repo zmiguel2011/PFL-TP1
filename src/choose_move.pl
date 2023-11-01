@@ -1,3 +1,20 @@
+color(1,blue).
+color(2,green).
+
+manage_capture(gamestate(Board,P), 'H', _Level, gamestate(NewBoard,P)):-
+    repeat,
+    color(P,Color),
+    display_game(gamestate(Board,P)), nl,
+    write('Please input the coords where you want the captured piece to go.\n'),
+    manageRow(Row),
+    manageColumn(Col),
+    nl, format('Choosen Coords: (~d, ~d)~n',[Row, Col]),
+    if_then_else(
+        is_empty_cell(Board,Row,Col),
+        replaceInBoard(Board,Row,Col,Color,NewBoard),
+        fail
+    ).
+
 /**
  * choose_move(+GameState, +Player, +Level, -Move)
  * Chooses a move for the player to make.
@@ -5,11 +22,11 @@
  * Player - the player
  * Move - move for the player to make
  */
-choose_move(GameState, 'H', _Level, move(Pawn, NewCoords)):- % (HUMAN)
+choose_move(GameState, 'H', _Level, move(Pawn, NewCoords),Capture):- % (HUMAN)
     choose_pawn(GameState, Pawn),
     valid_moves_pawn(GameState, Pawn, ValidMoves),
     print_moves_pawn(ValidMoves),
-    choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords).
+    choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture).
 
 choose_move(GameState, 'C', 1, Move):- % (COMMPUTER - LEVEL 1)
     valid_moves(GameState, _Player, ListOfMoves),
@@ -55,7 +72,7 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
  * Pawn - the pawn to move -> pawn(Row, Col)
  * NewCoords - new coordinates for the pawn
  */
-choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords):-
+choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords,Capture):-
     length(ValidMoves, L),
     L1 is L - 1,
     repeat,
@@ -63,7 +80,7 @@ choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords):-
     write('  > Index:  '), read(Index),
     Index >= 0, Index =< L1,
     !,
-    getValueFromList(ValidMoves, Index, NewCoords).
+    getValueFromList(ValidMoves, Index, (NewCoords,Capture)).
 
 /**
  * choose_random_move(+GameState, +ValidMoves, -Move)
