@@ -12,8 +12,19 @@ manage_capture(gamestate(Board,P), 'H', _Level, gamestate(NewBoard,P)):-
     if_then_else(
         is_empty_cell(Board,Row,Col),
         replaceInBoard(Board,Row,Col,Color,NewBoard),
-        fail
+        (
+            write('Coordinates not valid\n'),
+            fail
+        )
     ).
+
+manage_capture(gamestate(Board,P), 'C', 1, gamestate(NewBoard,P)):-
+    repeat,
+    color(P,Color),
+    display_game(gamestate(Board,P)), nl,
+    write('Computer chooses where the captured piece goes.\n'),
+    choose_random_empty(Board,Row,Col),
+    replaceInBoard(Board,Row,Col,Color,NewBoard).
 
 /**
  * choose_move(+GameState, +Player, +Level, -Move)
@@ -28,11 +39,11 @@ choose_move(GameState, 'H', _Level, move(Pawn, NewCoords),Capture):- % (HUMAN)
     print_moves_pawn(ValidMoves),
     choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture).
 
-choose_move(GameState, 'C', 1, Move):- % (COMMPUTER - LEVEL 1)
+choose_move(GameState, 'C', 1, Move, Capture):- % (COMPUTER - LEVEL 1)
     valid_moves(GameState, _Player, ListOfMoves),
-    choose_random_move(GameState, ListOfMoves, Move).
+    choose_random_move(GameState, ListOfMoves, Move, Capture).
 
-choose_move(GameState, 'C', 2, Move):- % (COMMPUTER - LEVEL 2)
+choose_move(GameState, 'C', 2, Move):- % (COMPUTER - LEVEL 2)
     valid_moves(GameState, _Player, ListOfMoves),
     best_move(GameState, ListOfMoves, Move, _Value).
 
@@ -91,14 +102,14 @@ choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords,Capture):-
  * ValidMoves - list of valid moves
  * NewCoords - new coordinates for the pawn
  */
-choose_random_move(GameState, ValidMoves, Move):-
+choose_random_move(GameState, ValidMoves, Move, Capture):-
     length(ValidMoves, L),
     L1 is L - 1,
     repeat,
     random(0, L, Index),
     Index >= 0, Index =< L1,
     !,
-    getValueFromList(ValidMoves, Index, Move).
+    getValueFromList(ValidMoves, Index, (Move,Capture)).
 
 /**
  * best_move(+GameState, +ListOfMoves, -Move, -Value)
@@ -155,5 +166,16 @@ choose_random_pawn(gamestate(Board, Turn), pawn(Row,Col)):-
             fail, %  then it is an invalid choice
             format('~nComputer has choosen a pawn: (~d, ~d)~n',[Row, Col]) % else, proceed
         )
+    ).
+
+choose_random_empty(Board,Row,Col):-
+    repeat,
+    random(1,10,Row),
+    random(1,10,Col),
+    letter(Row,L),
+    if_then_else(
+        is_empty_cell(Board,Row,Col),
+        format('~nComputer has choosen a cell: (~w, ~w)~n',[L,Col]),
+        fail
     ).
 
