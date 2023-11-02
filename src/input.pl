@@ -51,64 +51,26 @@ readColumn(Column) :-
  * RowCode - the code correspondent to the ASCII code of the row
  * RowInt - the integer index of the row
  */
-validateRow(65, 1) :-
-    write('You chose row A\n').
-validateRow(97, 1) :-
-    write('You chose row A\n').
 
-validateRow(66, 2) :-
-    write('You chose row B\n').
-validateRow(98, 2) :-
-    write('You chose row B\n').
+validateRow(RowCode, RowInt) :-
+    (RowCode >= 65, RowCode =< 74),
+    RowInt is (RowCode - 65 + 1),
+    format('You chose Row ~c\n' , RowCode).
 
-validateRow(67, 3) :-
-    write('You chose row C\n').
-validateRow(99, 3) :-
-    write('You chose row C\n').
+validateRow(RowCode, RowInt) :-
+    (RowCode >= 97, RowCode =< 106),
+    RowInt is (RowCode - 97 + 1),
+    RowCode1 is (RowCode - 97 + 65),
+    format('You chose Row ~c\n' , RowCode1).
 
-validateRow(68, 4) :-
-    write('You chose row D\n').
-validateRow(100, 4) :-
-    write('You chose row D\n').
-
-validateRow(69, 5) :-
-    write('You chose row E\n').
-validateRow(101, 5) :-
-    write('You chose row E\n').
-
-validateRow(70, 6) :-
-    write('You chose row F\n').
-validateRow(102, 6) :-
-    write('You chose row F\n').
-
-validateRow(71, 7) :-
-    write('You chose row G\n').
-validateRow(103, 7) :-
-    write('You chose row G\n').
-
-validateRow(72, 8) :-
-    write('You chose row H\n').
-validateRow(104, 8) :-
-    write('You chose row H\n').
-
-validateRow(73, 9) :-
-    write('You chose row I\n').
-validateRow(105, 9) :-
-    write('You chose row I\n').
-
-validateRow(74, 10) :-
-    write('You chose row J\n').
-validateRow(106, 10) :-
-    write('You chose row J\n').
-
-validateRow(_Other, _Row) :-
+validateRow(_Other, _RowInt) :-
     write('ERROR: That row is not valid!\n\n'),
     fail.
 
 /**
  * validateColumn(+Column)
  * 
- * Validadates the column received. 
+ * Validates the column received. 
  */
 validateColumn(Column):- Column >= 1, Column =< 10, format('You chose column ~d\n' , Column).
 validateColumn(Column):- (Column < 5; Column > 10), !, write('\nERROR: That column is not valid!.\n\n'), fail.

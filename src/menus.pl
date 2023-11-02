@@ -87,7 +87,7 @@ manage_input(_Option) :-
 /**
  * validate_size(+Size)
  * 
- * Validadates the size received. 
+ * Validates the size received. 
  */
 validate_size(Size):- Size >= 5, Size =< 10.
 validate_size(Size):- (Size < 5; Size > 10), !, write('\nERROR: Size is invalid.\n\n'), fail.
@@ -96,7 +96,7 @@ validate_size(Size):- (Size < 5; Size > 10), !, write('\nERROR: Size is invalid.
 /**
  * validate_level(+Level)
  * 
- * Validadates the level received. 
+ * Validates the level received. 
  */
 validate_level(Level):- Level >= 1, Level =< 2.
 validate_level(Level):- (Level < 1; Level > 2), !, write('\nERROR: Level is invalid.\n\n'), fail.
