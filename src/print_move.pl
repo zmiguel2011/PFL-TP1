@@ -11,13 +11,14 @@ print_moves(ValidMoves) :-
     print_moves_list(ValidMoves, 0).
 
 /**
- * print_moves_list(+ValidMoves, +Index)
+ * print_moves_list(+ValidMoves, +Index) 
  * Print each move in the list of all valid moves.
+ * This function was implemented in the early stages of the game for testing purposes.
  * ValidMoves - the list of all valid moves 
  * Index - the index (in the list) to the current move being printed
  */
 print_moves_list([], _Index).
-print_moves_list([move( pawn(Row, Col), coords(NewRow, NewCol) )| Rest], Index) :-
+print_moves_list([_Capture-move( pawn(Row, Col), coords(NewRow, NewCol) )| Rest], Index) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
     format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Index, Letter, Col, NewLetter, NewCol]),
@@ -49,7 +50,7 @@ capture(1,'<- Capture').
  * Index - the index (in the list) to the current move being printed
  */
 pawn_print_moves_list([], _Index).
-pawn_print_moves_list([(coords(Row, Col),Capture) | Rest], Index) :-
+pawn_print_moves_list([Capture-coords(Row, Col) | Rest], Index) :-
     letter(Row,Letter),
     capture(Capture,CaptureString),
     format(' ~w. -> Row: ~w | Col: ~w ~w ~n', [Index, Letter, Col,CaptureString]),

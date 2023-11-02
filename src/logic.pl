@@ -4,6 +4,7 @@
  * GameState - current gamestate
  * Pawn - the pawn given
  * NewCoords - new (possible) coordinates for the pawn given
+ * Caputre - 1 if the move is a capture; 0 if it is a normal move
  */
 valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol),Capture):- % (Player 1)
       is_pawn_green(Board, Row, Col),
@@ -75,6 +76,7 @@ valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol),Capture):
  * GameState - current gamestate
  * Pawn - the pawn returned
  * NewCoords - new (possible) coordinates for the pawn returned
+ * Caputre - 1 if the move is a capture; 0 if it is a normal move
  */
 valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol),Capture):- % (Player 1)
       get_green_pawn(Board, Row, Col),
@@ -150,7 +152,7 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol),Capture):- % (
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves_pawn(GameState, Pawn, ListOfMoves):-
-    findall((NewCoords,Capture), valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
+    findall(Capture-NewCoords, valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 
 /**
  * valid_moves(+GameState, +Player, -ListOfMoves)
@@ -160,7 +162,7 @@ valid_moves_pawn(GameState, Pawn, ListOfMoves):-
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves(gamestate(Board, P), Player, ListOfMoves):-
-      bagof((move(Pawn,NewCoords),Capture), valid_move(gamestate(Board, P), Pawn, NewCoords, Capture), ListOfMoves).
+      bagof(Capture-move(Pawn,NewCoords), valid_move(gamestate(Board, P), Pawn, NewCoords, Capture), ListOfMoves).
 
 
 
@@ -174,25 +176,25 @@ valid_moves(gamestate(Board, P), Player, ListOfMoves):-
 green_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, Move,Capture),
+      choose_move(GameState, 'H', _Level, Capture-Move),
       print_chosen_move(Move),
       move(GameState, Move, MoveGameState),
       if_then_else(
             Capture =:= 1,
-            manage_capture(MoveGameState,'H',_Level,NewGameState),
+            manage_capture(MoveGameState,'H',NewGameState),
             NewGameState = MoveGameState
       ).
 
-green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
+green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
       write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
       display_game(GameState),
       valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, Move, Capture),
+      choose_move(GameState, 'C', Level, Capture-Move),
       print_chosen_move(Move),
       move(GameState, Move, MoveGameState),
       if_then_else(
             Capture =:= 1,
-            manage_capture(MoveGameState,'C', 1, NewGameState),
+            manage_capture(MoveGameState,'C', NewGameState),
             NewGameState = MoveGameState
       ).
 
@@ -207,7 +209,7 @@ green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
 blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
-      choose_move(GameState, 'H', _Level, Move, Capture),
+      choose_move(GameState, 'H', _Level, Capture-Move),
       print_chosen_move(Move),
       move(GameState, Move, MoveGameState),
       if_then_else(
@@ -216,11 +218,11 @@ blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
             NewGameState = MoveGameState
       ).
 
-blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMMPUTER)
+blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
       write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
       display_game(GameState),
       valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, Move, Capture),
+      choose_move(GameState, 'C', Level, Capture-Move),
       print_chosen_move(Move),
       move(GameState, Move, MoveGameState),
       if_then_else(

@@ -1,51 +1,23 @@
-color(1,blue).
-color(2,green).
-
-manage_capture(gamestate(Board,P), 'H', _Level, gamestate(NewBoard,P)):-
-    repeat,
-    color(P,Color),
-    display_game(gamestate(Board,P)), nl,
-    write('Please input the coords where you want the captured piece to go.\n'),
-    manageRow(Row),
-    manageColumn(Col),
-    nl, format('Choosen Coords: (~d, ~d)~n',[Row, Col]),
-    if_then_else(
-        is_empty_cell(Board,Row,Col),
-        replaceInBoard(Board,Row,Col,Color,NewBoard),
-        (
-            write('Coordinates not valid\n'),
-            fail
-        )
-    ).
-
-manage_capture(gamestate(Board,P), 'C', 1, gamestate(NewBoard,P)):-
-    repeat,
-    color(P,Color),
-    display_game(gamestate(Board,P)), nl,
-    write('Computer chooses where the captured piece goes.\n'),
-    choose_random_empty(Board,Row,Col),
-    replaceInBoard(Board,Row,Col,Color,NewBoard).
-
 /**
  * choose_move(+GameState, +Player, +Level, -Move)
  * Chooses a move for the player to make.
  * GameState - current gamestate
  * Player - the player
- * Move - move for the player to make
+ * Capture-Move - move for the player to make, Capture indicates if it is a capture move
  */
-choose_move(GameState, 'H', _Level, move(Pawn, NewCoords),Capture):- % (HUMAN)
+choose_move(GameState, 'H', _Level, Capture-move(Pawn, NewCoords)):- % (HUMAN)
     choose_pawn(GameState, Pawn),
     valid_moves_pawn(GameState, Pawn, ValidMoves),
     print_moves_pawn(ValidMoves),
     choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture).
 
-choose_move(GameState, 'C', 1, Move, Capture):- % (COMPUTER - LEVEL 1)
+choose_move(GameState, 'C', 1, Capture-Move):- % (COMPUTER - LEVEL 1)
     valid_moves(GameState, _Player, ListOfMoves),
     choose_random_move(GameState, ListOfMoves, Move, Capture).
 
-choose_move(GameState, 'C', 2, Move):- % (COMPUTER - LEVEL 2)
+choose_move(GameState, 'C', 2, Capture-Move):- % (COMPUTER - LEVEL 2)
     valid_moves(GameState, _Player, ListOfMoves),
-    best_move(GameState, ListOfMoves, Move, _Value).
+    best_move(GameState, ListOfMoves, Capture-Move, _Value).
 
 
 /**
@@ -76,14 +48,15 @@ choose_pawn(gamestate(Board, P), pawn(Row,Col)):-
 
 
 /**
- * choose_move_pawn(+GameState, +ValidMoves, +Pawn, -NewCoords)
+ * choose_move_pawn(+GameState, +ValidMoves, +Pawn, -NewCoords, -Capture)
  * Prompts the player to choose a move to make from the valid_moves list.
  * GameState - current gamestate
  * ValidMoves - list of valid moves
  * Pawn - the pawn to move -> pawn(Row, Col)
  * NewCoords - new coordinates for the pawn
+ * Capture - indicates if it is a capture move
  */
-choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords,Capture):-
+choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture):-
     length(ValidMoves, L),
     L1 is L - 1,
     repeat,
@@ -91,16 +64,17 @@ choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords,Capture):-
     write('  > Index:  '), read(Index),
     Index >= 0, Index =< L1,
     !,
-    getValueFromList(ValidMoves, Index, (NewCoords,Capture)).
+    getValueFromList(ValidMoves, Index, Capture-NewCoords).
 
 /**
- * choose_random_move(+GameState, +ValidMoves, -Move)
+ * choose_random_move(+GameState, +ValidMoves, -Move, -Capture)
  *
  * Chooses a random move for the bot to make from the valid_moves list.
  * Pawn - the pawn to move -> pawn(Row, Col)
  * GameState - current gamestate(Board, Turn)
  * ValidMoves - list of valid moves
  * NewCoords - new coordinates for the pawn
+ * Capture - indicates if it is a capture move
  */
 choose_random_move(GameState, ValidMoves, Move, Capture):-
     length(ValidMoves, L),
@@ -109,7 +83,49 @@ choose_random_move(GameState, ValidMoves, Move, Capture):-
     random(0, L, Index),
     Index >= 0, Index =< L1,
     !,
-    getValueFromList(ValidMoves, Index, (Move,Capture)).
+    getValueFromList(ValidMoves, Index, Capture-Move).
+
+/**
+ * color(+Turn, -Pawn)
+ *
+ * Retrieve the color of the oponents' pawns.
+ */
+color(1,blue). % used in manage_capture
+color(2,green). % used in manage_capture
+
+/**
+ * manage_capture(+GameState, +Player, -NewGameState)
+ *
+ * Manages and performs the capture of a pawn.
+ * GameState - current gamestate(Board, Turn)
+ * Player - the player (Human or Compute)
+ * NewGameState - new gamestate(Board, Turn)
+ */
+manage_capture(gamestate(Board,P), 'H', gamestate(NewBoard,P)):-
+    repeat,
+    color(P,Color),
+    display_game(gamestate(Board,P)), nl,
+    write('Please input the coords where you want the captured piece to go.\n'),
+    manageRow(Row),
+    manageColumn(Col),
+    nl, format('Choosen Coords: (~d, ~d)~n',[Row, Col]),
+    if_then_else(
+        is_empty_cell(Board,Row,Col),
+        replaceInBoard(Board,Row,Col,Color,NewBoard),
+        (
+            write('Coordinates are not valid!\n'),
+            fail
+        )
+    ).
+
+manage_capture(gamestate(Board,P), 'C', gamestate(NewBoard,P)):-
+    repeat,
+    color(P,Color),
+    display_game(gamestate(Board,P)), 
+    nl, write('Computer chooses where the captured piece goes.\n'),
+    choose_random_empty(Board,Row,Col),
+    replaceInBoard(Board,Row,Col,Color,NewBoard).
+
 
 /**
  * best_move(+GameState, +ListOfMoves, -Move, -Value)
@@ -120,9 +136,9 @@ choose_random_move(GameState, ValidMoves, Move, Capture):-
  * Move - the best move
  * Value - the value of the best move
  */
-best_move(GameState, ListOfMoves, Move, Value) :-
-    bagof(Value-Move, (member(Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
-    min_member(Value-Move, ListOfMovesPairs).
+best_move(GameState, ListOfMoves, Capture-Move, Value) :-
+    bagof(Value-Capture-Move, (member(Capture-Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
+    min_member(Value-Capture-Move, ListOfMovesPairs).
 
 
 /**
@@ -172,10 +188,10 @@ choose_random_empty(Board,Row,Col):-
     repeat,
     random(1,10,Row),
     random(1,10,Col),
-    letter(Row,L),
+    letter(Row,Letter),
     if_then_else(
         is_empty_cell(Board,Row,Col),
-        format('~nComputer has choosen a cell: (~w, ~w)~n',[L,Col]),
+        format('~nComputer has choosen a cell: (~w, ~w)~n',[Letter,Col]),
         fail
     ).
 
