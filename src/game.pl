@@ -4,6 +4,7 @@
 :- consult('logic.pl').
 :- consult('input.pl').
 :- consult('move.pl').
+:- consult('valid_moves.pl').
 :- consult('choose_move.pl').
 :- consult('print_move.pl').
 :- consult('value.pl').
