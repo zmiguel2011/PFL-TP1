@@ -1,99 +1,114 @@
-% Define the predicates for managing row and column input
-
-% Predicate for managing the row input
+/**
+ * manageRow(-NewRow)
+ *
+ * Retrieves a valid row from the player.
+ * NewRow - the row
+ */
 manageRow(NewRow) :-
     repeat,
     readRow(Code),
     validateRow(Code, NewRow), !.
 
-% Predicate for managing the column input
-manageColumn(NewColumn) :-
+/**
+ * manageRow(-NewColumn)
+ *
+ * Retrieves a valid column from the player.
+ * NewColumn - the column
+ */
+manageColumn(Column) :-
     repeat,
     readColumn(Column),
-    validateColumn(Column, NewColumn), !.
+    validateColumn(Column), !.
 
-% Predicate to read the row input as char
+/**
+ * readRow(-Code)
+ *
+ * Read a row (letter) from the player.
+ * Code - the char code correspondent to the letter row
+ */
 readRow(Code) :-
     nl,
     write('  > Row:  '),
     ignore_newlines,
     read_char(Code).
 
-% Predicate to read the column input
+/**
+ * readColumn(-Column)
+ *
+ * Read a column (integer) from the player.
+ * Column - the column
+ */
 readColumn(Column) :-
     nl,
     write('  > Column:  '),
     ignore_newlines,
     read_integer(0, Column).
 
-% Predicate to validate the row input
+/**
+ * validateRow(+RowCode, -RowInt)
+ *
+ * Validates and converts the row code received into an integer.
+ * RowCode - the code correspondent to the ASCII code of the row
+ * RowInt - the integer index of the row
+ */
 validateRow(65, 1) :-
-    write('You entered character A\n').
+    write('You chose row A\n').
 validateRow(97, 1) :-
-    write('You entered character A\n').
+    write('You chose row A\n').
 
 validateRow(66, 2) :-
-    write('You entered character B\n').
+    write('You chose row B\n').
 validateRow(98, 2) :-
-    write('You entered character B\n').
+    write('You chose row B\n').
 
 validateRow(67, 3) :-
-    write('You entered character C\n').
+    write('You chose row C\n').
 validateRow(99, 3) :-
-    write('You entered character C\n').
+    write('You chose row C\n').
 
 validateRow(68, 4) :-
-    write('You entered character D\n').
+    write('You chose row D\n').
 validateRow(100, 4) :-
-    write('You entered character D\n').
+    write('You chose row D\n').
 
 validateRow(69, 5) :-
-    write('You entered character E\n').
+    write('You chose row E\n').
 validateRow(101, 5) :-
-    write('You entered character E\n').
+    write('You chose row E\n').
 
 validateRow(70, 6) :-
-    write('You entered character F\n').
+    write('You chose row F\n').
 validateRow(102, 6) :-
-    write('You entered character F\n').
+    write('You chose row F\n').
 
 validateRow(71, 7) :-
-    write('You entered character G\n').
+    write('You chose row G\n').
 validateRow(103, 7) :-
-    write('You entered character G\n').
+    write('You chose row G\n').
 
 validateRow(72, 8) :-
-    write('You entered character H\n').
+    write('You chose row H\n').
 validateRow(104, 8) :-
-    write('You entered character H\n').
+    write('You chose row H\n').
 
 validateRow(73, 9) :-
-    write('You entered character I\n').
+    write('You chose row I\n').
 validateRow(105, 9) :-
-    write('You entered character I\n').
+    write('You chose row I\n').
 
 validateRow(74, 10) :-
-    write('You entered character J\n').
+    write('You chose row J\n').
 validateRow(106, 10) :-
-    write('You entered character J\n').
+    write('You chose row J\n').
 
 validateRow(_Other, _Row) :-
     write('ERROR: That row is not valid!\n\n'),
     fail.
 
-
-% Predicate to validate the column input
-validateColumn(1, 1).
-validateColumn(2, 2).
-validateColumn(3, 3).
-validateColumn(4, 4).
-validateColumn(5, 5).
-validateColumn(6, 6).
-validateColumn(7, 7).
-validateColumn(8, 8).
-validateColumn(9, 9).
-validateColumn(10, 10).
-
-validateColumn(_, _NewColumn) :-
-    write('ERROR: That column is not valid!\n\n'),
-    fail.
+/**
+ * validateColumn(+Column)
+ * 
+ * Validadates the column received. 
+ */
+validateColumn(Column):- Column >= 1, Column =< 10, format('You chose column ~d\n' , Column).
+validateColumn(Column):- (Column < 5; Column > 10), !, write('\nERROR: That column is not valid!.\n\n'), fail.

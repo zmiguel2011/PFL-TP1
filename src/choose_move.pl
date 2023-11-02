@@ -26,24 +26,30 @@ choose_move(GameState, 'C', 2, Capture-Move):- % (COMPUTER - LEVEL 2)
  * GameState - current gamestate
  * Pawn - used to store the choosen pawn
  */
-choose_pawn(gamestate(Board, P), pawn(Row,Col)):- 
+choose_pawn(gamestate(Board, 1), pawn(Row,Col)):-  % if it's Player 1 (green)
     repeat,
     write('\nPlease input the coords to the pawn you wish to move.\n'),
     manageRow(Row),
+    letter(Row,Letter),
     manageColumn(Col),
-    nl, format('Your pawn: (~d, ~d)~n',[Row, Col]),
-    if_then_else(
-        P == 1,           % if P is Player 1 (green)
-        if_then_else(      % then check if a valid green pawn was choosen
-                not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
-                (write('Invalid choice! Cell is not a green pawn!\n'), fail), % then it is an invalid choice
-                nl % else, proceed
-        ),
-        if_then_else(      % else check if a valid blue pawn was choosen
-                not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
-                (write('Invalid choice! Cell is not a blue pawn!\n'), fail), %  then it is an invalid choice
-                nl % else, proceed
-        )
+    nl, format('Your pawn: (~w, ~d)~n',[Letter, Col]),
+    if_then_else(      % then check if a valid green pawn was choosen
+        not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
+        (write('Invalid choice! Cell is not a green pawn!\n'), fail), % then it is an invalid choice
+        nl % else, proceed
+    ).
+
+choose_pawn(gamestate(Board, 2), pawn(Row,Col)):-  % if it's Player 2 (blue)
+    repeat,
+    write('\nPlease input the coords to the pawn you wish to move.\n'),
+    manageRow(Row),
+    letter(Row,Letter),
+    manageColumn(Col),
+    nl, format('Your pawn: (~w, ~d)~n',[Letter, Col]),
+    if_then_else(      % then check if a valid blue pawn was choosen
+        not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
+        (write('Invalid choice! Cell is not a blue pawn!\n'), fail), % then it is an invalid choice
+        nl % else, proceed
     ).
 
 
@@ -184,14 +190,22 @@ choose_random_pawn(gamestate(Board, Turn), pawn(Row,Col)):-
         )
     ).
 
-choose_random_empty(Board,Row,Col):-
+/**
+ * choose_random_empty(+Board, -Row, -Col)
+ *
+ * Chooses a random (empty) position for the bot to move the captured pawn. 
+ * Board - current Board for the game
+ * Row - random row
+ * Col - random column
+ */
+choose_random_empty(Board, Row, Col):-
     repeat,
     random(1,10,Row),
     random(1,10,Col),
     letter(Row,Letter),
     if_then_else(
         is_empty_cell(Board,Row,Col),
-        format('~nComputer has choosen a cell: (~w, ~w)~n',[Letter,Col]),
+        format('~nComputer has choosen a cell: (~w, ~d)~n',[Letter,Col]),
         fail
     ).
 
