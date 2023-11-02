@@ -122,6 +122,7 @@ replaceInBoard([H|T], Row, Col, Value, [H|TNew]) :-
 
 /**
  * is_pawn_green(+Board, +Row, +Col)
+ *
  * Checks if cell (Row, Column) is 'green' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
@@ -132,6 +133,7 @@ is_pawn_green(Board, Row, Col) :-
 
 /**
  * is_pawn_blue(+Board, +Row, +Col)
+ *
  * Checks if cell (Row, Column) is 'blue' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
@@ -142,6 +144,7 @@ is_pawn_blue(Board, Row, Col) :-
 
 /**
  * is_empty_cell(+Board, +Row, +Col)
+ *
  * Checks if cell (Row, Column) is 'empty' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
@@ -152,6 +155,7 @@ is_pawn_blue(Board, Row, Col) :-
 
 /**
  * is_green_goal(+Board, +Row, +Col)
+ *
  * Checks if cell (Row, Column) is 'greenGoal' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
@@ -162,6 +166,7 @@ is_pawn_blue(Board, Row, Col) :-
 
 /**
  * is_blue_goal(+Board, +Row, +Col)
+ *
  * Checks if cell (Row, Column) is 'blueGoal' using the predicate getValueFromBoard (declared in utils.pl)
  * Board - current board
  * Row - row to search for
@@ -172,6 +177,7 @@ is_pawn_blue(Board, Row, Col) :-
 
 /**
  * get_green_pawn(+Board, -Row, -Col)
+ *
  * Retrieves a green pawn from the board
  * Board - current board
  * Row - row to search for
@@ -182,6 +188,7 @@ get_green_pawn(Board, Row, Col) :-
 
 /**
  * get_blue_pawn(+Board, -Row, -Col)
+ *
  * Retrieves a blue pawn from the board
  * Board - current board
  * Row - row to search for
@@ -190,11 +197,38 @@ get_green_pawn(Board, Row, Col) :-
 get_blue_pawn(Board, Row, Col) :-  
       getIndexFromBoard(Board, Row, Col, blue).
 
+/**
+ * ignore_newlines
+ *
+ * Ignores any newlines written by the user
+ */
 ignore_newlines :-
     repeat,
     peek_char(Char),  % Peek at the next character without consuming it
     ((Char == '\n', get_char(_)) ; (Char == end_of_file ; Char \= '\n')),
     !.
+
+/**
+ * read_char(-Code)
+ *
+ * Reads a character from the user
+ */
+read_char(Code) :-
+    get_code(Code),
+    skip_line.
+
+/**
+ * read_char(-Code)
+ *
+ * Reads an integer from the user
+ */
+read_integer(Acc, Int) :-
+    get_code(C),
+    if_then_else(
+        (C >= 48, C =< 57),
+        (Acc1 is Acc * 10 + (C - 48), read_integer(Acc1, Int)),
+        Int is Acc
+    ).
 
 
 /**

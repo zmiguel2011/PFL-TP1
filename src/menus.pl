@@ -1,13 +1,15 @@
 main_menu :-
     print_main_menu,
     choose_menu_option,
-    read(Input),
+    ignore_newlines,
+    read_integer(0, Input),
     manage_input(Input), !.
 
 manage_input(1) :-
     repeat,
     choose_board_size,
-    read(Size),
+    ignore_newlines,
+    read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
     start_game('H','H', Size, _).
@@ -15,13 +17,15 @@ manage_input(1) :-
 manage_input(2) :-
     repeat,
     choose_board_size,
-    read(Size),
+    ignore_newlines,
+    read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
     repeat,
     display_choose_level,
     nl, write(' > Level: '), 
-    read(Level),
+    ignore_newlines,
+    read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
     start_game('H','C', Size, Level).
@@ -29,13 +33,15 @@ manage_input(2) :-
 manage_input(3) :-
     repeat,
     choose_board_size,
-    read(Size),
+    ignore_newlines,
+    read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
     repeat,
     display_choose_level,
     nl, write(' > Level: '), 
-    read(Level),
+    ignore_newlines,
+    read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
     start_game('C','H', Size, Level).
@@ -43,13 +49,15 @@ manage_input(3) :-
 manage_input(4) :-
     repeat,
     choose_board_size,
-    read(Size),
+    ignore_newlines,
+    read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
     repeat,
     display_choose_level,
     nl, write(' > Level: '), 
-    read(Level),
+    ignore_newlines,
+    read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
     start_game('C','C', Size, Level).
@@ -57,8 +65,9 @@ manage_input(4) :-
 manage_input(5) :-
     print_instructions,
     choose_menu_option,
-    read(_Input),
-    go_back(_Input).
+    ignore_newlines,
+    read_char(_Input), !,
+    main_menu.
 
 manage_input(0) :-
     write('\nExiting...\n\n').
@@ -70,16 +79,9 @@ manage_input(0) :-
 manage_input(_Option) :-
     write('\nERROR: that option does not exist.\n\n'),
     choose_menu_option,
-    read(Input),
-    manage_input(Input).
-
-/**
- * go_back(+_Option)
- * 
- * Returns to main menu. 
- */
-go_back(_Option) :-
-    main_menu.
+    ignore_newlines,
+    read_integer(0, Input),
+    manage_input(Input), !.
 
 
 /**

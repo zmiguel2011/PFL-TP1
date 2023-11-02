@@ -61,7 +61,7 @@ choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture):-
     L1 is L - 1,
     repeat,
     write('\n Please input the index for the move you wish to make.\n'),
-    write('  > Index:  '), read(Index),
+    write('  > Index:  '), ignore_newlines, read_integer(0, Index),
     Index >= 0, Index =< L1,
     !,
     getValueFromList(ValidMoves, Index, Capture-NewCoords).
@@ -105,10 +105,10 @@ manage_capture(gamestate(Board,P), 'H', gamestate(NewBoard,P)):-
     repeat,
     color(P,Color),
     display_game(gamestate(Board,P)), nl,
-    write('Please input the coords where you want the captured piece to go.\n'),
+    write('Please input the coords where you want the captured pawn to go.\n'),
     manageRow(Row),
     manageColumn(Col),
-    nl, format('Choosen Coords: (~d, ~d)~n',[Row, Col]),
+    nl, format('Choosen Coords for the captured pawn: (~d, ~d)~n',[Row, Col]),
     if_then_else(
         is_empty_cell(Board,Row,Col),
         replaceInBoard(Board,Row,Col,Color,NewBoard),
@@ -122,7 +122,7 @@ manage_capture(gamestate(Board,P), 'C', gamestate(NewBoard,P)):-
     repeat,
     color(P,Color),
     display_game(gamestate(Board,P)), 
-    nl, write('Computer chooses where the captured piece goes.\n'),
+    nl, write('Computer chooses where the captured pawn goes.\n'),
     choose_random_empty(Board,Row,Col),
     replaceInBoard(Board,Row,Col,Color,NewBoard).
 

@@ -17,15 +17,14 @@ readRow(Code) :-
     nl,
     write('  > Row:  '),
     ignore_newlines,
-    get_char(Char),
-    skip_line,
-    char_code(Char,Code).
+    read_char(Code).
 
 % Predicate to read the column input
 readColumn(Column) :-
     nl,
     write('  > Column:  '),
-    read(Column).
+    ignore_newlines,
+    read_integer(0, Column).
 
 % Predicate to validate the row input
 validateRow(65, 1) :-
