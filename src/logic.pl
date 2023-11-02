@@ -46,7 +46,7 @@ blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
       move(GameState, Move, MoveGameState),
       if_then_else(
             Capture =:= 1,
-            manage_capture(MoveGameState,'H',Level,NewGameState),
+            manage_capture(MoveGameState,'H',NewGameState),
             NewGameState = MoveGameState
       ).
 
@@ -59,7 +59,7 @@ blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
       move(GameState, Move, MoveGameState),
       if_then_else(
             Capture =:= 1,
-            manage_capture(MoveGameState,'C', 1, NewGameState),
+            manage_capture(MoveGameState,'C', NewGameState),
             NewGameState = MoveGameState
       ).
 
