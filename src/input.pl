@@ -30,24 +30,54 @@ readColumn(Column) :-
 % Predicate to validate the row input
 validateRow(65, 1) :-
     write('You entered character A\n').
+validateRow(97, 1) :-
+    write('You entered character A\n').
+
 validateRow(66, 2) :-
     write('You entered character B\n').
+validateRow(98, 2) :-
+    write('You entered character B\n').
+
 validateRow(67, 3) :-
     write('You entered character C\n').
+validateRow(99, 3) :-
+    write('You entered character C\n').
+
 validateRow(68, 4) :-
     write('You entered character D\n').
+validateRow(100, 4) :-
+    write('You entered character D\n').
+
 validateRow(69, 5) :-
     write('You entered character E\n').
+validateRow(101, 5) :-
+    write('You entered character E\n').
+
 validateRow(70, 6) :-
     write('You entered character F\n').
+validateRow(102, 6) :-
+    write('You entered character F\n').
+
 validateRow(71, 7) :-
     write('You entered character G\n').
+validateRow(103, 7) :-
+    write('You entered character G\n').
+
 validateRow(72, 8) :-
     write('You entered character H\n').
+validateRow(104, 8) :-
+    write('You entered character H\n').
+
 validateRow(73, 9) :-
     write('You entered character I\n').
+validateRow(105, 9) :-
+    write('You entered character I\n').
+
 validateRow(74, 10) :-
     write('You entered character J\n').
+validateRow(106, 10) :-
+    write('You entered character J\n').
+
 validateRow(_Other, _Row) :-
     write('ERROR: That row is not valid!\n\n'),
     fail.
