@@ -50,7 +50,7 @@ value_blue(GameState, MinValue) :-
  * Evaluates the GameState for the green player. The lower the value, the more advantage they have.
  * Value - distance between the green pawn and the green goal (1,1).
  */
-value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
+value_green_pawn(gamestate(Board, _Turn), pawn(Row, Col), Value) :-
     get_green_pawn(Board, Row, Col),
     orthogonal_distance(1, 1, Row, Col, Value).
 
@@ -61,7 +61,7 @@ value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
  * Evaluates the GameState for the blue player. The lower the value, the more advantage they have.
  * Value - distance between the blue pawn and the blue goal (N,N).
  */
-value_blue_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
+value_blue_pawn(gamestate(Board, _Turn), pawn(Row, Col), Value) :-
     get_blue_pawn(Board, Row, Col),
     length(Board, N),
     orthogonal_distance(N, N, Row, Col, Value).

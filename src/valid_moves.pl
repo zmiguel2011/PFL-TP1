@@ -180,6 +180,6 @@ valid_moves_pawn(GameState, Pawn, ListOfMoves):-
  * Player - a player
  * ListOfMoves - the list of valid moves for the pawn given
  */
-valid_moves(gamestate(Board, P), Player, ListOfMoves):-
-      bagof(Capture-move(Pawn,NewCoords), valid_move(gamestate(Board, P), Pawn, NewCoords, Capture), ListOfMoves).
+valid_moves(GameState, Player, ListOfMoves):-
+      bagof(Capture-move(Pawn,NewCoords), valid_move(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 

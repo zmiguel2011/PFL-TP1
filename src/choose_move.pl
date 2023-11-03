@@ -3,7 +3,8 @@
  * Chooses a move for the player to make.
  * GameState - current gamestate
  * Player - the player
- * Capture-Move - move for the player to make, Capture indicates if it is a capture move
+ * Level - the level if the player is a computer
+ * Move - move for the player to make -> Capture-move(Pawn, NewCoords), Capture indicates if it is a capture move
  */
 choose_move(GameState, 'H', _Level, Capture-move(Pawn, NewCoords)):- % (HUMAN)
     choose_pawn(GameState, Pawn),
@@ -24,7 +25,7 @@ choose_move(GameState, 'C', 2, Capture-Move):- % (COMPUTER - LEVEL 2)
  * choose_pawn(+GameState, -Pawn)
  * Prompts player to choose a pawn to move.
  * GameState - current gamestate
- * Pawn - used to store the choosen pawn
+ * Pawn - choosen pawn
  */
 choose_pawn(gamestate(Board, 1), pawn(Row,Col)):-  % if it's Player 1 (green)
     repeat,
@@ -79,7 +80,7 @@ choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture):-
  * Pawn - the pawn to move -> pawn(Row, Col)
  * GameState - current gamestate(Board, Turn)
  * ValidMoves - list of valid moves
- * NewCoords - new coordinates for the pawn
+ * Move - random move
  * Capture - indicates if it is a capture move
  */
 choose_random_move(GameState, ValidMoves, Move, Capture):-
@@ -107,10 +108,10 @@ color(2,green). % used in manage_capture
  * Player - the player (Human or Compute)
  * NewGameState - new gamestate(Board, Turn)
  */
-manage_capture(gamestate(Board,P), 'H', gamestate(NewBoard,P)):-
+manage_capture(gamestate(Board,Turn), 'H', gamestate(NewBoard,Turn)):-
     repeat,
-    color(P,Color),
-    display_game(gamestate(Board,P)), nl,
+    color(Turn,Color),
+    display_game(gamestate(Board,Turn)), nl,
     write('Please input the coords where you want the captured pawn to go.\n'),
     manageRow(Row),
     manageColumn(Col),
@@ -124,10 +125,10 @@ manage_capture(gamestate(Board,P), 'H', gamestate(NewBoard,P)):-
         )
     ).
 
-manage_capture(gamestate(Board,P), 'C', gamestate(NewBoard,P)):-
+manage_capture(gamestate(Board,Turn), 'C', gamestate(NewBoard,Turn)):-
     repeat,
-    color(P,Color),
-    display_game(gamestate(Board,P)), 
+    color(Turn,Color),
+    display_game(gamestate(Board,Turn)), 
     nl, write('Computer chooses where the captured pawn goes.\n'),
     choose_random_empty(Board,Row,Col),
     replaceInBoard(Board,Row,Col,Color,NewBoard).
@@ -139,7 +140,7 @@ manage_capture(gamestate(Board,P), 'C', gamestate(NewBoard,P)):-
  * Choose best move from list.
  * GameState - current gamestate(Board, Turn)
  * ListOfMoves - list of valid moves
- * Move - the best move
+ * Move - the best move -> Capture-Move, Capture indicates if it is a capture move
  * Value - the value of the best move
  */
 best_move(GameState, ListOfMoves, Capture-Move, Value) :-

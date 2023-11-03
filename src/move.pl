@@ -18,7 +18,7 @@ move(GameState, move(Pawn, NewCoords), NewGameState):-
  * NewCoords - new coordinates for the pawn
  * NewGameState - new gamestate
  */
-move_pawn(gamestate(Board, _P), pawn(Row, Col), coords(NewRow, NewCol), gamestate(NewBoard, _P)):-
+move_pawn(gamestate(Board, _Turn), pawn(Row, Col), coords(NewRow, NewCol), gamestate(NewBoard, _P)):-
     getValueFromBoard(Board, Row, Col, Value),
     replaceInBoard(Board, Row, Col, empty, Board1),
     replaceInBoard(Board1, NewRow, NewCol, Value, NewBoard). 

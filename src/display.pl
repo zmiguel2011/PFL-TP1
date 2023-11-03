@@ -29,11 +29,11 @@ letter(10, L) :- L='J'.
 
 
 /**
- * display_game(+Size, +gamestate)
+ * display_game(+Size, +GameState)
  * 
  * Prints the board. 
  */
-display_game(gamestate(Board, _P)) :-
+display_game(gamestate(Board, _Turn)) :-
     nl,
     length(Board, Size),
     Nmax is Size+1,
