@@ -69,13 +69,13 @@ To run this game you need a running Prolog environment, preferably [SICStus Prol
 - **Claustro** is an abstract board game with 3 simple rules (Goal, Move and Capture). The game is played in a square diamond shaped board with the opposing upper corner and lower corner being the green and blue goals, respectively, and the other two opposing left and right corners, being unoccupiable squares.
 
 <p align="center">
-  <img width="500" height="500"  src="imgs/claustro_board_original.png" />
+  <img width="300" height="300"  src="imgs/claustro_board_original.png" />
 </p>
 
 In order to print the game properly, we decided to turn the board 45 degrees to the left, making it so the board is now a square. The upper-left corner and lower-right corner are the green (G) and blue (B) goals, respectively, and the other two opposing upper-right and lower-left corners, being unoccupiable squares (-).
 
 <p align="center">
-  <img width="500" height="500" src="imgs/claustro_board.jpg" />
+  <img width="300" height="300" src="imgs/claustro_board.jpg" />
 </p>
 
 - Each player starts with the same number of pawns, and the primary objective is to reach the goal corresponding to the player color.
@@ -175,11 +175,11 @@ The logic here is the same as above. When it finally arrives at the right column
 
 Examples of different Game States representations have been hard-coded and made available to play through using the following commands on the SICStus console:
 
-|gamestate|Command|
+| GameState | Command |
 |:--:|:--|
-| initialState | simply using the `play.` predicate ||
-| intermediateState | `intermediate_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an intermediate state | IMAGENS |
-| finalState | `final_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an final state | IMAGENS |
+| initialState | simply using the `play.` predicate |
+| intermediateState | `intermediate_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an intermediate state |
+| finalState | `final_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an final state |
 
 Note: P1 and P2 are the players, which can 'H' for human or 'C' for computer. In the latter, the user can select levels 1 or 2 in the last parameter of the game_loop/4 predicate.
 
@@ -445,9 +445,9 @@ The functions responsible for these move choices are in the `choose_move.pl` fil
     move(gamestate(Board, 2), Move, NewGameState),
     value_blue(NewGameState, Value).
   ```
-  In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate `bagof/3` is used to collect `Value-Capture-Move`, where `Value` is the Move value and `Capture-Move` represent the actual Move, combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Capture-Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
+  In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate, `bagof/3` is used to collect `Value-Capture-Move`, where `Value` is the Move value and `Capture-Move` represents the actual Move combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Capture-Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
 
-  The bottom two predicates serve to calculate a Value of a specific Move, using the previously explained predicates `value_green/2` and `value_blue/2` to evaluate a `gamestate` after applying the Move.
+  The bottom predicate `get_move_value/3` is used to calculate the Value of a specific Move, using the previously explained predicates `value_green/2` and `value_blue/2` to evaluate a `gamestate` after applying the Move.
 
 
 
