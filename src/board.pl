@@ -17,11 +17,11 @@ intermediateBoard([
 
 
 finalBoard([
-[greenGoal,blue,empty,empty,inaccessible],
+[green,blue,empty,empty,inaccessible],
 [blue,empty,green,empty,empty],
 [empty,empty,empty,green,empty],
 [green,empty,empty,empty,blue],
-[inaccessible,blue,empty,green,blueGoal]
+[inaccessible,blue,empty,empty,blueGoal]
 ]).
 
 

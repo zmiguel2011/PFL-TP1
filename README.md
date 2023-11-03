@@ -46,8 +46,8 @@ Made available under [GNU General Public License v3](LICENSE), copyrighted mater
     - [José Miguel Moreira Isidro](https://github.com/zmiguel2011) (<up202006485@fe.up.pt>)
     - [José António Santos Costa](https://github.com/JaySuave) (<up202004823@fe.up.pt>)
 - **Contribuition:** 
-    - José Miguel Moreira Isidro:
-    - José António Santos Costa:
+    - José Miguel Moreira Isidro: 67%
+    - José António Santos Costa: 33%
 
 
 ## Installation and Execution
@@ -60,27 +60,309 @@ To run this game you need a running Prolog environment, preferably [SICStus Prol
 
 ### Execution
 
+1. Open SICStus Prolog 4.8;
+2. Consult `main.pl`, located in the `src` folder;
+3. Call the `play.` predicate without any arguments.
+
 ## Description of the game
+
+- **Claustro** is an abstract board game with 3 simple rules (Goal, Move and Capture). The game is played in a square board with the opposing upper-left corner and lower-right corner being the green and blue goals, respectively, and the other two opposing upper-right and lower-left corners, being non-occupiable squares.
+
+- Each player starts with the same number of pawns, and the primary objective is to reach the goal corresponding to the player color.
+
+- Players alternatively take turns moving a pawn of his choice on square orthogonally, or capture an opponent's piece diagonally (in all four directions). In the event of a capture, the player responsible for the capture must place the captured piece on any unoccupied square of the board.
+
+- The game ends when a player walks a pawn into his respective goal.
 
 ## Game logic
 
 
 ### Internal Game state representation
 
+To keep track of the game's internal state, we make use of a `gameState` data structure described below:
+
+|Field|Description|
+|:--:|:--|
+| Board |Matrix where each element is a list, representing the squares of the board, it can contain one of 5 elements (green, blue, inaccessible, greenGoal, blueGoal)|
+| P |1 or 2 depending on which turn is it (1-Green;2-Blue). It's value is changed after each turn|
+
+
+The `gameState` structure is initialized like this:
+
+```prolog
+initial_state(Size, gamestate(Board, _P)) :-
+    board_create(Size, Board1),
+    replaceInBoard(Board1, 1, 1, greenGoal, Board2),       
+    replaceInBoard(Board2, Size, Size, blueGoal, Board3),   
+    replaceInBoard(Board3, 1, Size, inaccessible, Board4),  
+    replaceInBoard(Board4, Size, 1, inaccessible, Board)
+```
+
+The first predicate `board_create/2` dinamically builds the board according to the size specified by the player. It does so calling an helper predicate `board_create/3` that is explained below:
+
+  ```prolog
+  board_create(N, I, []) :- I > N, !.
+  board_create(N, I, [Row|Board]) :-
+      board_create_row(N, I, Row),
+      I1 is I+1,
+      board_create(N, I1, Board).
+  ```
+  If `I` (Index) is greater than `N` (Size), the list of Rows is empty. This serves as base case for the function
+
+  Furthermore, when the index is within the board size, a new element (`Row`) is prepended to the `Board`. To "populate" the rows we call an helper function `board_create_row/3` which calls `board_create_row/4` with the additional parameter `J` that refers to the column index.
+
+  ```prolog
+  board_create_row(N, _I, J, []) :- J > N, !.
+  board_create_row(N, 1, J, [blue|Board]):-         
+    J =< (N+1)/2,
+    J1 is J+1, 
+    board_create_row(N, 1, J1, Board),
+    !.
+  board_create_row(N, I, 1, [blue|Board]):-        
+    I =< (N+1)/2,
+    board_create_row(N, I, 2, Board),
+    !.
+  ```
+
+  If `J` is greater than `N` , the list of the Column is empty. This serves as base case for the function.
+
+  After this, the second predicate refers to the first Row of the Board (`I = 1`). In here the parameter is only valid, and in result the square is populated with a `blue` piece, when the column index (`J`) is less-than or equal to half the Board size (`(N+1)/2`).
+
+  Moreover, the third predicate refers to the first column of the Board (`J = 1`), where it replicates the effect above, this time vertically along the column.
+
+  Similar conditions are employed to populate the `green` pieces, additionally, when none of those rules apply, the squares are filled with empty values, as shown below:
+
+  ```prolog
+  board_create_row(N, I, J, [empty|Board]):-       
+    J1 is J+1, 
+    board_create_row(N, I, J1, Board),
+    !.
+  ```
+
+Examples of different Game States representations have been hard-coded and made available to play through using the following commands on the SICStus console:
+
+|gameState|Command|
+|:--:|:--|
+| initialState | simply using the `play.` predicate ||
+| intermediateState | `intermediate_state(X),game_loop(X,_,_,_).` will start the game in an intermediate state | IMAGENS |
+| finalState | `final_state(X),game_loop(X,_,_,_).` will start the game in an final state | IMAGENS |
+
+#### Initial State
+
+![initial-state](image.png)
+
+#### Intermediate State
+
+![intermediate-state](image.png)
+
+#### Final State
+
+![final-state](image.png)
+
+
 ### Game state visualization
+
+When the game is initiated, a menu is printed. In this menu, the player can choose 6 different options:
+  
+  - (1-4) Different types of Gameplay;
+  - (5) Instructions;
+  - (0) Exit.
+
+#### Input
+
+  Input from the player is fetched using the `read_char/1` and `read_integer/2`:
+
+  ```prolog
+  read_char(Code) :-
+      get_code(Code),
+      skip_line.
+
+  read_integer(Acc, Int) :-
+      get_code(C),
+      if_then_else(
+          (C >= 48, C =< 57),
+          (Acc1 is Acc * 10 + (C - 48), read_integer(Acc1, Int)),
+          Int is Acc
+      ).
+  ```
+
+  Using this functions we fetch the desired inputs directly from the stream, removing the necessity to add a dot to the end of the input, therefore improving the flow of the gameplay.
+
+  In the `read_integer/2` predicate, we use retrieve a character from the stream using `get_code/1` and check if the character represents a digit comparing it's ASCII code (`C >= 48, C =< 57`). In the coding of the game we call this predicate with the `Acc` value set to 0. This way, if the character is indeed a digit we update the accumulator as follows: `Acc1 is Acc * 10 + (C - 48)`, allowing us to keep retrieving characters from the stream and associating them with their respective numerical value.
+
+  When a non-digit character is encoutered, the predicate returns the integer value of the characters presented by the player on the stream.
+
+
+  Each menu input has a correspondant `manage_input/1` predicate that uses the functions above, checks their validity (if input is out-of-bounds or non integer it asks for another input) and calls the predicates necessary for the actions the option describes. For example, the predicate for option 1 (`1. Human vs Human`):
+
+  ```prolog
+  manage_input(1) :-
+    repeat,
+    choose_board_size,
+    ignore_newlines,
+    read_integer(0, Size),
+    validate_size(Size),   % backtrack to repeat
+    !, % when input is valid, cut!, we won't backtrack to repeat anymore
+    start_game('H','H', Size, _).
+
+  ```
+
+#### Game Display
+
+The game has a rectangular board that is printed before every player move, and when the player is prompted to place an captured piece. The board is represented using a `Size`x`Size` grid, when `Size` has been previously chosen by the Player.
+
+  Example Board:
+  ![example-board](image.png)
+
+The predicate used to display the game is `display_game/1`, which takes a single argument `gamestate/2`:
+
+```prolog
+display_game(gamestate(Board, _P)) :-
+  nl,
+  length(Board, Size),
+  Nmax is Size+1,
+  printHeader(Nmax),
+  printMatrix(Board, 1, Nmax).
+```
+
+After computing the lenght of the board, and therefore it's size, `printHeader/1` is called which, with the help of predicates `printHeader1/2` and `printDivider/2` print on the screen the header of the board complete with column numbers, followed by a Row divider.
+
+The predicate `printMatrix/3` is responsible for printing the rest of the Board, taking a list `Board`, the current column number `N`, and the maximum column number `Nmax`. It recursively iterates of the list of Rows, printing each Row (using `printRow/1`), the subsequent divider and incrementing the column number.
+
+There are also display predicates for the menu, such as:
+
+  - `print_main_menu`
+  - `display_choose_level`
+  - `print_instructions`
+
 
 ### Move Validation and Execution
 
+A play is only valid when we attempt to move a piece orthogonally to an `empty` cell, or capture diagonally an opponent's piece. After captures, the player is only allowed to place the captured piece in an `empty` cell.
+
+```prolog
+move(GameState, move(Pawn, NewCoords), NewGameState):-
+    move_pawn(GameState, Pawn, NewCoords, NewGameState). 
+
+move_pawn(gamestate(Board, _P), pawn(Row, Col), coords(NewRow, NewCol), gamestate(NewBoard, _P)):-
+    getValueFromBoard(Board, Row, Col, Value),
+    replaceInBoard(Board, Row, Col, empty, Board1),
+    replaceInBoard(Board1, NewRow, NewCol, Value, NewBoard). 
+```
+
+The `move/3` predicate is responsible for moving the piece in the board, by replacing the current coordinates of the piece with an `empty` value and replacing the new coordinates with the piece value (`blue`/`green`).
+
+This predicate is only called after the movement has been logically validated:
+
+```prolog
+valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol), 0):- % (Player 1)
+    is_pawn_green(Board, Row, Col),
+    length(Board,Max), 
+    between(1,Max,NewRow),
+    between(1,Max,NewCol),
+    (
+        getValueFromBoard(Board,NewRow,NewCol,empty),
+        (
+                (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+        );
+        getValueFromBoard(Board,NewRow,NewCol,greenGoal),
+        (
+                (NewRow =:= Row + 1, NewCol =:= Col); % Right
+                (NewRow =:= Row - 1, NewCol =:= Col); % Left
+                (NewRow =:= Row, NewCol =:= Col + 1); % Down
+                (NewRow =:= Row, NewCol =:= Col - 1)  % Up
+        )
+    ).
+
+valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol), 1):- % (Player 1)
+    is_pawn_green(Board, Row, Col),
+    length(Board,Max), 
+    between(1,Max,NewRow), 
+    between(1,Max,NewCol), 
+    (
+        getValueFromBoard(Board,NewRow,NewCol,blue), 
+        (
+                (NewRow =:= Row + 1, NewCol =:= Col + 1); % Down Right
+                (NewRow =:= Row - 1, NewCol =:= Col + 1); % Up Right
+                (NewRow =:= Row + 1, NewCol =:= Col - 1); % Down Left
+                (NewRow =:= Row - 1, NewCol =:= Col - 1)  % Up Left
+        )
+    ).
+```
+
+The predicates `valid_move_pawn/4` above refer to the move validation for Human (`H`) players in the case of an orthogonal non-capture move and capture move, respectively. In any of the cases, after checking if the coordinates being evaluated relate to the desired piece (in this case a `green` piece), a number between 1 and the lenght of the Board (`Max`) is assigned to both `NewRow` and `NewCol`, this assures the new coordinates are within bounds. After this, using `getValueFromBoard/4` we retrieve the coordinates of the cells containing `blue`,`empty` and `greenGoal`. Using this values we compare them to the squares diagonally, in the first case, and orthogonally, in other cases, and if all predicates are true we return the coordinates of a valid movement.
+
+In case a movement is considered a Capture, an correspoonding flag will be returned in the 4th argument (0=non-capture;1=capture).
+
+The main difference between this predicate and the one employed in the validation of Computer (`C`) moves is that, while the Human variant checks if the choosen coordinates compute the location of the desired piece, the Computer variant logically retrieves valid coordinates for further evaluation.
+
 ### List of valid moves
+
+To retrieve the possible plays of an Human player we use the predicate `valid_moves_pawn/3`, that uses the predefined predicate `findall/3`, to retrive a list of valid new coordinates coupled with the flag `Capture`.
+
+```prolog
+valid_moves_pawn(GameState, Pawn, ListOfMoves):-
+  findall(Capture-NewCoords, valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves). 
+```
+
+To retrieve the possible plays of a Computer player we use the similar predicate `valid_moves/3`, which instead of new coordinates (`NewCoords`) populates a list with valid movements (`move/2`) coupled with the flag `Capture`. Moreover, instead of `findall/3`, it uses `bagof/3` to remove duplicates.
+
+```prolog
+valid_moves(gamestate(Board, P), Player, ListOfMoves):-
+  bagof(Capture-move(Pawn,NewCoords), valid_move(gamestate(Board, P), Pawn, NewCoords, Capture), ListOfMoves).
+```
 
 ### End of game
 
+The game only ends when a Player's piece reaches the Players goal, for example when a `green` piece reaches `greenGoal`. In order to verify this we check the corners of the board correspondant to each Player's goal for the Player's piece. We do this using the `game_over/2` predicate, which takes as an argument the `game_state` and returns the `Winner`. The predicate also prints the "Game Over" message.
+
+```prolog
+game_over(gamestate(Board, Winner), Winner):-
+      checkVictory(Board, Winner), !,
+      write('\n------------------ GAME OVER -------------------\n\n'),
+      nl, format(' > Congratulations! Player ~w has won the game!', Winner), nl.
+
+checkVictory(Board, 1):- is_pawn_green(Board, 1, 1).
+checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
+```
+
 ### Game State Evaluation
+
+A board where the Player is winning has positive value, a board where the Enemy Player is winning has negative value.
+
+Using the predicates `value_green_pawn/3` and `value_blue_pawn/3` we can retrieve the associated `Value` for a `Pawn` in a determined `Gamestate`, this value refers to the orthogonal distance to the objective square, it uses `orthogonal_distance/5`. After this the `value_green/2` and `value_blue/2` predicates use `aggregate/3` to retrieve the minimum valued element from a list `MinValue` that associates each `Pawn` to their value using the first 2 predicates described above. The minimum valued element, in other words, the element closer to completing the objective determines the Player with most value on the board.
+
+Predicates examples for the `green` Player:
+
+```prolog
+value(GameState, 1, Value) :- % GREEN
+    value_green(GameState, ValueGreen),
+    value_blue(GameState, ValueBlue),
+    if_then_else(
+        ValueGreen < ValueBlue,
+        Value = 1, % green player has the advantage
+        Value = -1
+    ), !.
+
+value_green(GameState, MinValue) :-
+    aggregate(min(Value), Pawn^value_green_pawn(GameState, Pawn, Value), MinValue).
+
+value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
+    get_green_pawn(Board, Row, Col),
+    orthogonal_distance(1, 1, Row, Col, Value).
+```
 
 ### Computer Plays
 
 
 ## Conclusions
 
+Overall the development of the program was enjoyable, the deadlines were achievable and the pratical lessons were very much helpful and ilustrative in regards to the project. We, as a group, feel we accomplished the features we proposed ourselves, and believe we were able to present well documented and organized code.
+
 ## Bibliography
+
+- https://boardgamegeek.com/boardgame/391334/claustro
 
