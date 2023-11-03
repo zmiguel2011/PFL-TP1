@@ -418,7 +418,7 @@ value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
 
 Overall the development of the program was enjoyable, the deadlines were achievable and the pratical lessons were very much helpful and ilustrative in regards to the project. We, as a group, feel we accomplished the features we proposed ourselves, and believe we were able to present well documented and organized code.
 
-We have also gained an understanding of some of the uses of the Prolog language and have tried to make the most of its perks and quirks.
+We have also gained an understanding of some of the uses of the Prolog language and have tried to make the most out of its perks and quirks.
 
 ## Bibliography
 
