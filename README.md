@@ -185,15 +185,14 @@ Note: P1 and P2 are the players, which can 'H' for human or 'C' for computer. In
 
 #### Initial State
 
-![initial-state](image.png)
+![initial-state](imgs/initial-state.png)
 
 #### Intermediate State
 
-![intermediate-state](image.png)
-
+![intermediate-state](imgs/intermediate-state.png)
 #### Final State
 
-![final-state](image.png)
+![final-state](imgs/final-state.png)
 
 
 ### Game state visualization
@@ -247,10 +246,11 @@ When the game is initiated, a menu is printed. In this menu, the player can choo
 
 #### Game Display
 
-The game has a square board that is printed before every player move, and when the player is prompted to place a captured piece. The board is represented using a `Size`x`Size` grid, which has been previously chosen by the user.
+The game has a square board that is printed before every player move, and when the player is prompted to place a captured piece. The board is represented using a `Size`x`Size` grid, which  has been previously chosen by the user (`5 <= Size <= 10`).
 
-  Example Board:
-  ![example-board](image.png)
+| Size = 5 | Size = 7 | Size = 10 |
+| :---:   | :---:   | :---:   |
+| ![size5](imgs/size5.png) | ![size7](imgs/size7.png) | ![size10](imgs/size100.png) |
 
 The predicate used to display the game is `display_game/1`, which takes a single argument `gamestate/2`:
 
@@ -389,7 +389,7 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
 
 A board where the Player is winning has positive value, a board where the Enemy Player is winning has negative value.
 
-Using the predicates `value_green_pawn/3` and `value_blue_pawn/3` we can retrieve the associated `Value` for a `Pawn` in a determined `Gamestate`, this value refers to the orthogonal distance to the objective square, it uses `orthogonal_distance/5`. After this the `value_green/2` and `value_blue/2` predicates use `aggregate/3` to retrieve the minimum valued element from a list `MinValue` that associates each `Pawn` to their value using the first 2 predicates described above. The minimum valued element, in other words, the element closer to completing the objective determines the Player with most value on the board.
+Using the predicates `value_green_pawn/3` and `value_blue_pawn/3` we can retrieve the associated `Value` for a `Pawn` in a determined `Gamestate`, this value refers to the orthogonal distance to the objective square, it uses `orthogonal_distance/5`. After this the `value_green/2` and `value_blue/2` predicates use `aggregate/3` to retrieve the minimum valued element from a list `MinValue` that associates each `Pawn` to their value using the first 2 predicates described above. The minimum valued element, in other words the element closer to completing the objective, determines the Player with most value on the board.
 
 Example predicates for the `green` Player:
 
@@ -412,6 +412,43 @@ value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
 ```
 
 ### Computer Plays
+
+In our game, when the Gameplay involves Computer players, Users can select two different skill Levels for the Computer plays. The first Level is based on the predefined `random/3` predicate, so all the plays made by a Computer in this Level will be randomized. The second Level is based on a `greedy` approach, that takes into account all the available pieces and their distance to their respective goal, and returns the one that is `closest`.
+
+The functions responsible for these move choices are in the `choose_move.pl` file and their definitions can be found below:
+
+- Level 1
+  ```prolog
+  choose_random_move(GameState, ValidMoves, Move, Capture):-
+    length(ValidMoves, L),
+    L1 is L - 1,
+    repeat,
+    random(0, L, Index),
+    Index >= 0, Index =< L1,
+    !,
+    getValueFromList(ValidMoves, Index, Capture-Move).
+  ```
+
+  The predicate `choose_random_move/4` retrieves a random `Capture-Move` tuple from the previous generated list `ValidMoves` using a randomized index (`random/3`) and the previously explained function `getValueFromList/3`.
+
+- Level 2
+  ```prolog
+  best_move(GameState, ListOfMoves, Capture-Move, Value) :-
+    bagof(Value-Capture-Move, (member(Capture-Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
+    min_member(Value-Capture-Move, ListOfMovesPairs).
+
+  get_move_value(gamestate(Board, 1), Move, Value) :- 
+    move(gamestate(Board, 1), Move, NewGameState),
+    value_green(NewGameState, Value).
+
+  get_move_value(gamestate(Board, 2), Move, Value) :- 
+    move(gamestate(Board, 2), Move, NewGameState),
+    value_blue(NewGameState, Value).
+  ```
+  In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate `bagof/3` is used to collect `Value-Capture-Move`, where `Value` is the Move value and `Capture-Move` represent the actual Move, combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Capture-Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
+
+  The bottom two predicates serve to calculate a Value of a specific Move, using the previously explained predicates `value_green/2` and `value_blue/2` to evaluate a `gamestate` after applying the Move.
+
 
 
 ## Conclusions
