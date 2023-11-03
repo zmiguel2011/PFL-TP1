@@ -2,11 +2,11 @@
  * change_turn(+GameState,-NewGameState)
  * 
  * Change player's turn
- * GameState - current gamestate
- * NewGameState - new gamestate
+ * GameState - current gamestate(Board, Turn)
+ * NewGameState - new gamestate(Board, NewTurn)
  */
-change_turn(gamestate(Board, 1),gamestate(Board, 2)).
-change_turn(gamestate(Board, 2),gamestate(Board, 1)).
+change_turn(gamestate(_Board, 1), gamestate(_Board, 2)).
+change_turn(gamestate(_Board, 2), gamestate(_Board, 1)).
 
 /**
  * turn(+Turn,-Color)
@@ -48,7 +48,8 @@ handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
 game_over(gamestate(Board, Winner), Winner):-
       checkVictory(Board, Winner), !,
       write('\n------------------ GAME OVER -------------------\n\n'),
-      nl, format(' > Congratulations! Player ~d has won the game!', Winner), nl.
+      turn(Winner, Color),
+      nl, format(' > Congratulations! Player ~d (~w) has won the game!', [Winner, Color]), nl.
 
 /**
  * checkVictory(+Board, +Player)
@@ -67,18 +68,17 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
  * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
  * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
  */
-game_loop(gamestate(Board, 1), Player1, Player2, Level) :- % Player 1's Turn
-      handle_turn(gamestate(Board, 1), Player1, Level, gamestate(NewBoard, 1)),
+game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
+      handle_turn(GameState, Player1, Level, SecondGameState),
       (
-            game_over(gamestate(NewBoard, 1), _Winner); % check is the game is over
-            game_loop(gamestate(NewBoard, 2), Player1, Player2, Level) % else continue the game and change turn
-      ).
-
-game_loop(gamestate(Board, 2), Player1, Player2, Level) :- % Player 2's Turn
-      handle_turn(gamestate(Board, 2), Player2, Level, gamestate(NewBoard, 2)),
-      (
-            game_over(gamestate(NewBoard, 2), _Winner); % check is the game is over
-            game_loop(gamestate(NewBoard, 1), Player1, Player2, Level) % else continue the game and change turn
+            game_over(SecondGameState, _Winner); % check if the game is over
+            ( 
+                  ( change_turn(SecondGameState, ThirdGameState), handle_turn(ThirdGameState, Player2, Level, ForthGameState) ), % else change turn and continue the game
+                        (
+                              game_over(ForthGameState, _Winner); % check if the game is over
+                              ( change_turn(ForthGameState, FinalGameState), game_loop(FinalGameState, Player1, Player2, Level) ) % else change turn and continue the game
+                        )
+            )
       ).
 
 
