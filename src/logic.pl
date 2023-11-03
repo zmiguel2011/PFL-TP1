@@ -1,68 +1,43 @@
 /**
+ * change_turn(+GameState,-NewGameState)
+ * 
+ * Change player's turn
+ * GameState - current gamestate
+ * NewGameState - new gamestate
+ */
+change_turn(gamestate(Board, 1),gamestate(Board, 2)).
+change_turn(gamestate(Board, 2),gamestate(Board, 1)).
+
+/**
+ * turn(+Turn,-Color)
+ * 
+ * Associate a color to a turn
+ * Turn - current turn, 1 or 2
+ * Color - the correspondent color, green or blue
+ */
+turn(1, 'GREEN').
+turn(2, 'BLUE').
+
+/**
  * green_player_turn(+GameState, +Player, +Level, -NewGameState)
+ *
  * Handles green player's turn
  * GameState - current gamestate
  * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
  * NewGameState - new gamestate
  */
-green_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
-      write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
-      display_game(GameState),
-      choose_move(GameState, 'H', _Level, Capture-Move),
+handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
+      turn(Turn, Color),
+      format('\n------------------ PLAYER ~d (~w) -------------------\n\n', [Turn, Color]),
+      display_game(gamestate(Board, Turn)),
+      choose_move(gamestate(Board, Turn), Player, Level, Capture-Move),
       print_chosen_move(Move),
-      move(GameState, Move, MoveGameState),
+      move(gamestate(Board, Turn), Move, MoveGameState),
       if_then_else(
             Capture =:= 1,
-            manage_capture(MoveGameState,'H',NewGameState),
+            manage_capture(MoveGameState,Player,NewGameState),
             NewGameState = MoveGameState
       ).
-
-green_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
-      write('\n------------------ PLAYER 1 (GREEN) -------------------\n\n'),
-      display_game(GameState),
-      valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, Capture-Move),
-      print_chosen_move(Move),
-      move(GameState, Move, MoveGameState),
-      if_then_else(
-            Capture =:= 1,
-            manage_capture(MoveGameState,'C', NewGameState),
-            NewGameState = MoveGameState
-      ).
-
-
-/**
- * blue_player_turn(+GameState, +Player, +Level, -NewGameState)
- * Handles blue player's turn
- * GameState - current gamestate
- * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
- * NewGameState - new gamestate
- */
-blue_player_turn(GameState, 'H', Level, NewGameState) :- % (HUMAN)
-      write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
-      display_game(GameState),
-      choose_move(GameState, 'H', _Level, Capture-Move),
-      print_chosen_move(Move),
-      move(GameState, Move, MoveGameState),
-      if_then_else(
-            Capture =:= 1,
-            manage_capture(MoveGameState,'H',NewGameState),
-            NewGameState = MoveGameState
-      ).
-
-blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
-      write('\n------------------ PLAYER 2 (BLUE) -------------------\n\n'),
-      display_game(GameState),
-      valid_moves(GameState, 'C', ListOfMoves),
-      choose_move(GameState, 'C', Level, Capture-Move),
-      print_chosen_move(Move),
-      move(GameState, Move, MoveGameState),
-      if_then_else(
-            Capture =:= 1,
-            manage_capture(MoveGameState,'C', NewGameState),
-            NewGameState = MoveGameState
-      ).
-
 
 /**
  * game_over(+GameState, -Winner)
@@ -73,7 +48,7 @@ blue_player_turn(GameState, 'C', Level, NewGameState) :- % (COMPUTER)
 game_over(gamestate(Board, Winner), Winner):-
       checkVictory(Board, Winner), !,
       write('\n------------------ GAME OVER -------------------\n\n'),
-      nl, format(' > Congratulations! Player ~w has won the game!', Winner), nl.
+      nl, format(' > Congratulations! Player ~d has won the game!', Winner), nl.
 
 /**
  * checkVictory(+Board, +Player)
@@ -93,14 +68,14 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
  * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
  */
 game_loop(gamestate(Board, 1), Player1, Player2, Level) :- % Player 1's Turn
-      green_player_turn(gamestate(Board, 1), Player1, Level, gamestate(NewBoard, 1)),
+      handle_turn(gamestate(Board, 1), Player1, Level, gamestate(NewBoard, 1)),
       (
             game_over(gamestate(NewBoard, 1), _Winner); % check is the game is over
             game_loop(gamestate(NewBoard, 2), Player1, Player2, Level) % else continue the game and change turn
       ).
 
 game_loop(gamestate(Board, 2), Player1, Player2, Level) :- % Player 2's Turn
-      blue_player_turn(gamestate(Board, 2), Player2, Level, gamestate(NewBoard, 2)),
+      handle_turn(gamestate(Board, 2), Player2, Level, gamestate(NewBoard, 2)),
       (
             game_over(gamestate(NewBoard, 2), _Winner); % check is the game is over
             game_loop(gamestate(NewBoard, 1), Player1, Player2, Level) % else continue the game and change turn
