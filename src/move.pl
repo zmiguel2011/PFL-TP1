@@ -1,5 +1,6 @@
 /**
  * move(+GameState, +Move, -NewGameState)
+ *
  * Validate and execute a move
  * GameState - current gamestate
  * Move - a given move -> move(Pawn, NewCoords)
@@ -12,6 +13,7 @@ move(GameState, move(Pawn, NewCoords), NewGameState):-
 
 /**
  * move_pawn(+GameState, +Pawn, +NewCoords, -NewGameState)
+ *
  * Moves a pawn to new coordinates.
  * Pawn - the pawn to move
  * GameState - current gamestate

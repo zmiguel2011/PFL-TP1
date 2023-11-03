@@ -41,6 +41,7 @@ handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
 
 /**
  * game_over(+GameState, -Winner)
+ *
  * Checks if the game is over after each move (else, keep playing)
  * GameState - current gamestate
  * Winner - winner of the game
@@ -53,6 +54,7 @@ game_over(gamestate(Board, Winner), Winner):-
 
 /**
  * checkVictory(+Board, +Player)
+ *
  * Checks if the player has reached their goal
  * Board - current board
  * Player - current player
@@ -63,6 +65,7 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
 
 /**
  * game_loop(+GameState, +Player1, +Player2)
+ *
  * Main game function, waits for player to make a move, checks gamestate and changes turn or ends game
  * GameState - current gamestate(Board, Turn)
  * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
@@ -84,6 +87,7 @@ game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
 
 /**
  * start_game(+Player1, +Player2, +Size, +Level)
+ *
  * Starts the game with the initial state and initiates the game loop.
  * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
  * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively

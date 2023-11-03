@@ -1,3 +1,8 @@
+/**
+ * main_menu
+ * 
+ * Presents main menu to the user and manages his actions.
+ */
 main_menu :-
     print_main_menu,
     choose_menu_option,
@@ -5,6 +10,11 @@ main_menu :-
     read_integer(0, Input),
     manage_input(Input), !.
 
+/**
+ * manage_input(+Option)
+ * 
+ * Manages the input received. 
+ */
 manage_input(1) :-
     repeat,
     choose_board_size,
@@ -71,11 +81,7 @@ manage_input(5) :-
 
 manage_input(0) :-
     write('\nExiting...\n\n').
-/**
- * manage_input(+_Option)
- * 
- * Manages the input received. 
- */
+
 manage_input(_Option) :-
     write('\nERROR: that option does not exist.\n\n'),
     choose_menu_option,

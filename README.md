@@ -247,7 +247,7 @@ When the game is initiated, a menu is printed. In this menu, the player can choo
 
 #### Game Display
 
-The game has a square board that is printed before every player move, and when the player is prompted to place a captured piece. The board is represented using a `Size`x`Size` grid, which  has been previously chosen by the user.
+The game has a square board that is printed before every player move, and when the player is prompted to place a captured piece. The board is represented using a `Size`x`Size` grid, which has been previously chosen by the user.
 
   Example Board:
   ![example-board](image.png)
@@ -283,7 +283,7 @@ choose_move(GameState, 'H', _Level, Capture-move(Pawn, NewCoords)):- % (HUMAN)
     choose_pawn(GameState, Pawn),
     valid_moves_pawn(GameState, Pawn, ValidMoves),
     print_moves_pawn(ValidMoves),
-    choose_move_pawn(GameState, ValidMoves, Pawn, NewCoords, Capture).
+    choose_move_pawn(ValidMoves, NewCoords, Capture).
 ```
 
 This predicate was implemented for both human and computer players, but we'll discuss the latter in the `Computer Plays` section.

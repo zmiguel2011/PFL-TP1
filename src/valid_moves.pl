@@ -1,9 +1,10 @@
 /**
  * valid_move_pawn(+GameState, +Pawn, -NewCoords, -Capture) (Player 1)
- * Validate or return possible NewCoords for a given pawn
+ *
+ * Return valid NewCoords for a given pawn
  * GameState - current gamestate
  * Pawn - the pawn given
- * NewCoords - new (possible) coordinates for the pawn given
+ * NewCoords - new (valid) coordinates for the pawn given
  * Capture - 1 if the move is a capture; 0 if it is a normal move
  */
 valid_move_pawn(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol), 0):- % (Player 1)
@@ -82,10 +83,11 @@ valid_move_pawn(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol), 1):- % (
 
 /**
  * valid_move(+GameState, -Pawn, -NewCoords, -Capture)
- * Return possible a pawn and possible NewCoords for it to move to
+ *
+ * Return a pawn and possible (valid) NewCoords for it to move to
  * GameState - current gamestate
  * Pawn - the pawn returned
- * NewCoords - new (possible) coordinates for the pawn returned
+ * NewCoords - new (valid) coordinates for the pawn returned
  * Capture - 1 if the move is a capture; 0 if it is a normal move
  */
 valid_move(gamestate(Board,1),pawn(Row,Col),coords(NewRow,NewCol), 0):- % (Player 1)
@@ -165,6 +167,7 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol), 1):- % (Playe
 
 /**
  * valid_moves_pawn(+GameState, +Pawn, -ListOfMoves)
+ *
  * Returns a list of valid moves for a given pawn.
  * GameState - current gamestate
  * Pawn - a given pawn
@@ -175,11 +178,12 @@ valid_moves_pawn(GameState, Pawn, ListOfMoves):-
 
 /**
  * valid_moves(+GameState, +Player, -ListOfMoves)
+ *
  * Returns a list of valid moves for a given pawn.
  * GameState - current gamestate
  * Player - a player
  * ListOfMoves - the list of valid moves for the pawn given
  */
-valid_moves(GameState, Player, ListOfMoves):-
+valid_moves(GameState, _Player, ListOfMoves):-
       bagof(Capture-move(Pawn,NewCoords), valid_move(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 
