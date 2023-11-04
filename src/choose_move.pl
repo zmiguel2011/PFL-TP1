@@ -88,8 +88,6 @@ choose_random_move(ValidMoves, Move, Capture):-
     L1 is L - 1,
     repeat,
     random(0, L, Index),
-    Index >= 0, Index =< L1,
-    !,
     getValueFromList(ValidMoves, Index, Capture-Move).
 
 /**
@@ -115,7 +113,8 @@ manage_capture(gamestate(Board,Turn), 'H', gamestate(NewBoard,Turn)):-
     write('Please input the coords where you want the captured pawn to go.\n'),
     manageRow(Row),
     manageColumn(Col),
-    nl, format('Choosen Coords for the captured pawn: (~d, ~d)~n',[Row, Col]),
+    letter(Row,Letter),
+    nl, format('Choosen Coords for the captured pawn: (~w, ~d)~n',[Letter, Col]),
     if_then_else(
         is_empty_cell(Board,Row,Col),
         replaceInBoard(Board,Row,Col,Color,NewBoard),
@@ -129,7 +128,7 @@ manage_capture(gamestate(Board,Turn), 'C', gamestate(NewBoard,Turn)):-
     repeat,
     color(Turn,Color),
     display_game(gamestate(Board,Turn)), 
-    nl, write('Computer chooses where the captured pawn goes.\n'),
+    nl, write('Computer is choosing where the captured pawn goes.\n'),
     choose_random_empty(Board,Row,Col),
     replaceInBoard(Board,Row,Col,Color,NewBoard).
 
@@ -177,17 +176,18 @@ choose_random_pawn(gamestate(Board, Turn), pawn(Row,Col)):-
     repeat,
     random(1, 10, Row),
     random(1, 10, Col),
+    letter(Row,Letter),
     if_then_else(
         Turn == 1,            % if P is Player 1 (green)
         if_then_else(      % then check if a valid green pawn was chosen
             not(is_pawn_green(Board, Row, Col)), % if pawn is NOT green
             fail, % then it is an invalid choice
-            format('~nComputer has chosen a pawn: (~d, ~d)~n',[Row, Col]) % else, proceed
+            format('~nComputer has chosen a pawn: (~w, ~d)~n',[Letter, Col]) % else, proceed
         ),
         if_then_else(      % else check if a valid blue pawn was chosen
             not(is_pawn_blue(Board, Row, Col)), % if pawn is NOT blue
             fail, %  then it is an invalid choice
-            format('~nComputer has chosen a pawn: (~d, ~d)~n',[Row, Col]) % else, proceed
+            format('~nComputer has chosen a pawn: (~w, ~d)~n',[Letter, Col]) % else, proceed
         )
     ).
 
@@ -206,7 +206,7 @@ choose_random_empty(Board, Row, Col):-
     letter(Row,Letter),
     if_then_else(
         is_empty_cell(Board,Row,Col),
-        format('~nComputer has chosen a cell: (~w, ~d)~n',[Letter,Col]),
+        format('Choosen Coords for the captured pawn: (~w, ~d)~n',[Letter, Col]),
         fail
     ).
 
