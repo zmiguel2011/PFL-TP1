@@ -44,7 +44,7 @@ handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
       choose_move(gamestate(Board, Turn), Player, Level, Move),
       print_chosen_move(Move),
       move(gamestate(Board, Turn), Move, NewGameState),
-      if_then_else( is_capture(Move), print_capture_coords, true ).
+      if_then_else( is_capture(Move), print_capture_coords(Turn), true ).
 /**
  * game_over(+GameState, -Winner)
  *

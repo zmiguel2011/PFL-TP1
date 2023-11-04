@@ -109,7 +109,6 @@ manage_capture(gamestate(Board,Turn), h, gamestate(NewBoard,Turn)):-
     write('Please input the coords where you want the captured pawn to go.\n'),
     manageRow(Row),
     manageColumn(Col),
-    letter(Row,Letter),
     if_then_else(
         is_empty_cell(Board,Row,Col),
         ( asserta(dynamic_coords(Row, Col)), replaceInBoard(Board,Row,Col,Color,NewBoard) ),
@@ -196,7 +195,6 @@ choose_random_empty(Board, Row, Col):-
     repeat,
     random(1,10,Row),
     random(1,10,Col),
-    letter(Row,Letter),
     if_then_else(
         not(is_empty_cell(Board,Row,Col)),
         fail,

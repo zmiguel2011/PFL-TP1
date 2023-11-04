@@ -8,10 +8,10 @@
  * NewCoords - the new coordinates for the choosen pawn
  * NewGameState - new gamestate
  */
-move(GameState, move(Pawn, NewCoords, 0), NewGameState):-
+move(GameState, move(Pawn, NewCoords, 0), NewGameState):- % Normal Move
     move_pawn(GameState, Pawn, NewCoords, NewGameState).
 
-move(gamestate(Board, Turn), move(Pawn, NewCoords, 1), NewGameState):-
+move(gamestate(Board, Turn), move(Pawn, NewCoords, 1), NewGameState):- % Capture Move
     dynamic_player(Turn, Player),
     move_pawn(gamestate(Board, Turn), Pawn, NewCoords, MoveGameState),
     manage_capture(MoveGameState, Player, NewGameState).

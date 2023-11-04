@@ -23,7 +23,8 @@ print_moves_list([], _Index).
 print_moves_list([move( pawn(Row, Col), coords(NewRow, NewCol), Capture )| Rest], Index) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
-    format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Index, Letter, Col, NewLetter, NewCol]),
+    capture(Capture,CaptureString),
+    format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~w ~n', [Index, Letter, Col, NewLetter, NewCol, CaptureString]),
     Index1 is Index + 1,
     print_moves_list(Rest, Index1).
 
@@ -59,7 +60,7 @@ capture(1,'<- Capture').
  * Index - the index (in the list) to the current move being printed
  */
 pawn_print_moves_list([], _Index).
-pawn_print_moves_list([ move( pawn(Row, Col), coords(NewRow, NewCol), Capture ) | Rest], Index) :-
+pawn_print_moves_list([ move( pawn(_Row, _Col), coords(NewRow, NewCol), Capture ) | Rest], Index) :-
     letter(NewRow,Letter),
     capture(Capture,CaptureString),
     format(' ~w. -> Row: ~w | Col: ~w ~w ~n', [Index, Letter, NewCol,CaptureString]),
@@ -77,17 +78,22 @@ pawn_print_moves_list([ move( pawn(Row, Col), coords(NewRow, NewCol), Capture ) 
 print_chosen_move(move( pawn(Row, Col), coords(NewRow, NewCol), Capture )) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
-    format('~n > Chosen Move - Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Letter, Col, NewLetter, NewCol]).
+    capture(Capture,CaptureString),
+    format('~n > Chosen Move - Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~w ~n', [Letter, Col, NewLetter, NewCol, CaptureString]).
 
 
 /**
- * print_capture_coords
+ * print_capture_coords(+Turn)
  *
  * Print the new coords for the captured pawn.
  */
-print_capture_coords :-
+print_capture_coords(Turn) :-
     dynamic_coords(Row, Col),
     letter(Row, Letter),
-    nl, write('Computer is choosing where the captured pawn goes.\n'),
-    nl, format('Choosen Coords for the captured pawn: (~w, ~d)~n',[Letter, Col]),
+    if_then_else(
+        dynamic_player(Turn, c),
+        write('\nComputer is choosing where the captured pawn goes.\n'),
+        true
+    ),
+    format('~nChoosen Coords for the captured pawn: (~w, ~d)~n',[Letter, Col]),
     retractall(dynamic_coords(_,_)).

@@ -279,11 +279,11 @@ There are also display predicates for the menu, such as:
 We decided to approach the movement in 2 separate ways. For the human players, we first let them select a pawn to move and then we print the valid moves for that pawn. On the other hand, the computer will directly choose a valid move from all possible and valid moves. Below you can see the choose_move/4 predicated.
 
 ```prolog
-choose_move(GameState, 'H', _Level, Capture-move(Pawn, NewCoords)):- % (HUMAN)
+choose_move(GameState, h, _Level, Move):- % (HUMAN)
     choose_pawn(GameState, Pawn),
     valid_moves_pawn(GameState, Pawn, ValidMoves),
     print_moves_pawn(ValidMoves),
-    choose_move_pawn(ValidMoves, NewCoords, Capture).
+    choose_move_pawn(ValidMoves, Move).
 ```
 
 This predicate was implemented for both human and computer players, but we'll discuss the latter in the `Computer Plays` section.
@@ -293,8 +293,13 @@ Firsly, it allows the player to choose a valid pawn to move with the helper choo
 A play is only valid when we attempt to move a piece orthogonally to an `empty` cell, or capture diagonally an opponent's piece. After captures, the player is only allowed to place the captured piece in an `empty` cell.
 
 ```prolog
-move(GameState, move(Pawn, NewCoords), NewGameState):-
-    move_pawn(GameState, Pawn, NewCoords, NewGameState). 
+move(GameState, move(Pawn, NewCoords, 0), NewGameState):- % Normal Move
+    move_pawn(GameState, Pawn, NewCoords, NewGameState).
+
+move(gamestate(Board, Turn), move(Pawn, NewCoords, 1), NewGameState):- % Capture Move
+    dynamic_player(Turn, Player),
+    move_pawn(gamestate(Board, Turn), Pawn, NewCoords, MoveGameState),
+    manage_capture(MoveGameState, Player, NewGameState).
 
 move_pawn(gamestate(Board, _Turn), pawn(Row, Col), coords(NewRow, NewCol), gamestate(NewBoard, _Turn)):-
     getValueFromBoard(Board, Row, Col, Value),
@@ -361,14 +366,14 @@ To retrieve the valid moves for a Human player, we use the predicate `valid_move
 
 ```prolog
 valid_moves_pawn(GameState, Pawn, ListOfMoves):-
-  findall(Capture-NewCoords, valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves). 
+    findall(move(Pawn, NewCoords, Capture), valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 ```
 
-To retrieve the possible moves of a Computer player we use the similar predicate `valid_moves/3`, which instead of new coordinates (`NewCoords`) populates a list with valid movements (`move/2`) coupled with the flag `Capture`. Moreover, instead of `findall/3`, it uses `bagof/3` to remove duplicates.
+To retrieve the possible moves of a Computer player we use the similar predicate `valid_moves/3`, which instead of new coordinates (`NewCoords`) populates a list with valid movements (`move/3`), which include the flag `Capture`. Moreover, instead of `findall/3`, it uses `bagof/3` to remove duplicates.
 
 ```prolog
-valid_moves(gamestate(Board, P), Player, ListOfMoves):-
-  bagof(Capture-move(Pawn,NewCoords), valid_move(gamestate(Board, P), Pawn, NewCoords, Capture), ListOfMoves).
+valid_moves(GameState, _Player, ListOfMoves):-
+    bagof(move(Pawn, NewCoords, Capture), valid_move(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 ```
 
 ### End of game
@@ -406,7 +411,7 @@ value(GameState, 1, Value) :- % GREEN
 value_green(GameState, MinValue) :-
     aggregate(min(Value), Pawn^value_green_pawn(GameState, Pawn, Value), MinValue).
 
-value_green_pawn(gamestate(Board, _P), pawn(Row, Col), Value) :-
+value_green_pawn(gamestate(Board, _Turn), pawn(Row, Col), Value) :-
     get_green_pawn(Board, Row, Col),
     orthogonal_distance(1, 1, Row, Col, Value).
 ```
@@ -419,23 +424,24 @@ The functions responsible for these move choices are in the `choose_move.pl` fil
 
 - Level 1
   ```prolog
-  choose_random_move(GameState, ValidMoves, Move, Capture):-
+  choose_move(GameState, c, 1, Move):- % (COMPUTER - LEVEL 1)
+    valid_moves(GameState, _Player, ListOfMoves),
+    choose_random_move(ListOfMoves, Move).
+
+  choose_random_move(ValidMoves, Move):-
     length(ValidMoves, L),
     L1 is L - 1,
-    repeat,
-    random(0, L, Index),
-    Index >= 0, Index =< L1,
-    !,
-    getValueFromList(ValidMoves, Index, Capture-Move).
+    random(0, L1, Index),
+    getValueFromList(ValidMoves, Index, Move).
   ```
 
-  The predicate `choose_random_move/4` retrieves a random `Capture-Move` tuple from the previous generated list `ValidMoves` using a randomized index (`random/3`) and the previously explained function `getValueFromList/3`.
+  The predicate `choose_random_move/2` retrieves a random `Move` tuple from the previous generated list `ValidMoves` using a randomized index (`random/3`) and the previously explained function `getValueFromList/3`.
 
 - Level 2
   ```prolog
-  best_move(GameState, ListOfMoves, Capture-Move, Value) :-
-    bagof(Value-Capture-Move, (member(Capture-Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
-    min_member(Value-Capture-Move, ListOfMovesPairs).
+  best_move(GameState, ListOfMoves, Move, Value) :-
+    bagof(Value-Move, (member(Move, ListOfMoves), get_move_value(GameState, Move, Value)), ListOfMovesPairs),
+    min_member(Value-Move, ListOfMovesPairs).
 
   get_move_value(gamestate(Board, 1), Move, Value) :- 
     move(gamestate(Board, 1), Move, NewGameState),
@@ -445,7 +451,7 @@ The functions responsible for these move choices are in the `choose_move.pl` fil
     move(gamestate(Board, 2), Move, NewGameState),
     value_blue(NewGameState, Value).
   ```
-  In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate, `bagof/3` is used to collect `Value-Capture-Move`, where `Value` is the Move value and `Capture-Move` represents the actual Move combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Capture-Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
+  In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate, `bagof/3` is used to collect `Value-Move`, where `Value` is the Move value and `Move` represents the actual Move combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
 
   The bottom predicate `get_move_value/3` is used to calculate the Value of a specific Move, using the previously explained predicates `value_green/2` and `value_blue/2` to evaluate a `gamestate` after applying the Move.
 
