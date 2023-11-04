@@ -3,13 +3,18 @@
  *
  * Validate and execute a move
  * GameState - current gamestate
- * Move - a given move -> move(Pawn, NewCoords)
+ * Move - a given move -> move(Pawn, NewCoords, Capture)
  * Pawn - pawn the player choose to move
  * NewCoords - the new coordinates for the choosen pawn
  * NewGameState - new gamestate
  */
-move(GameState, move(Pawn, NewCoords), NewGameState):-
-    move_pawn(GameState, Pawn, NewCoords, NewGameState). 
+move(GameState, move(Pawn, NewCoords, 0), NewGameState):-
+    move_pawn(GameState, Pawn, NewCoords, NewGameState).
+
+move(gamestate(Board, Turn), move(Pawn, NewCoords, 1), NewGameState):-
+    dynamic_player(Turn, Player),
+    move_pawn(gamestate(Board, Turn), Pawn, NewCoords, MoveGameState),
+    manage_capture(MoveGameState, Player, NewGameState).
 
 /**
  * move_pawn(+GameState, +Pawn, +NewCoords, -NewGameState)

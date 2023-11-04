@@ -20,7 +20,7 @@ print_moves(ValidMoves) :-
  * Index - the index (in the list) to the current move being printed
  */
 print_moves_list([], _Index).
-print_moves_list([_Capture-move( pawn(Row, Col), coords(NewRow, NewCol) )| Rest], Index) :-
+print_moves_list([move( pawn(Row, Col), coords(NewRow, NewCol), Capture )| Rest], Index) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
     format(' ~w.  Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Index, Letter, Col, NewLetter, NewCol]),
@@ -59,10 +59,10 @@ capture(1,'<- Capture').
  * Index - the index (in the list) to the current move being printed
  */
 pawn_print_moves_list([], _Index).
-pawn_print_moves_list([Capture-coords(Row, Col) | Rest], Index) :-
-    letter(Row,Letter),
+pawn_print_moves_list([ move( pawn(Row, Col), coords(NewRow, NewCol), Capture ) | Rest], Index) :-
+    letter(NewRow,Letter),
     capture(Capture,CaptureString),
-    format(' ~w. -> Row: ~w | Col: ~w ~w ~n', [Index, Letter, Col,CaptureString]),
+    format(' ~w. -> Row: ~w | Col: ~w ~w ~n', [Index, Letter, NewCol,CaptureString]),
     Index1 is Index + 1,
     pawn_print_moves_list(Rest, Index1).
 
@@ -70,12 +70,24 @@ pawn_print_moves_list([Capture-coords(Row, Col) | Rest], Index) :-
  * print_chosen_move(+Move)
  *
  * Print each move in the of valid moves.
- * Move - the move to print -> move(Pawn, NewCoords)
+ * Move - the move to print -> move(Pawn, NewCoords, Capture)
  * Pawn - the pawn to move -> pawn(Row, Col)
  * NewCoords - new coordinates for the pawn -> coords(Row, Col)
  */
-print_chosen_move(move( pawn(Row, Col), coords(NewRow, NewCol) )) :-
+print_chosen_move(move( pawn(Row, Col), coords(NewRow, NewCol), Capture )) :-
     letter(Row, Letter),
     letter(NewRow, NewLetter),
     format('~n > Chosen Move - Row: ~w | Col: ~w  ->  NewRow: ~w | NewCol: ~w ~n', [Letter, Col, NewLetter, NewCol]).
 
+
+/**
+ * print_capture_coords
+ *
+ * Print the new coords for the captured pawn.
+ */
+print_capture_coords :-
+    dynamic_coords(Row, Col),
+    letter(Row, Letter),
+    nl, write('Computer is choosing where the captured pawn goes.\n'),
+    nl, format('Choosen Coords for the captured pawn: (~w, ~d)~n',[Letter, Col]),
+    retractall(dynamic_coords(_,_)).

@@ -22,7 +22,7 @@ manage_input(1) :-
     read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('H','H', Size, _).
+    start_game(h,h, Size, _).
 
 manage_input(2) :-
     repeat,
@@ -38,7 +38,7 @@ manage_input(2) :-
     read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('H','C', Size, Level).
+    start_game(h,c, Size, Level).
 
 manage_input(3) :-
     repeat,
@@ -54,7 +54,7 @@ manage_input(3) :-
     read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','H', Size, Level).
+    start_game(c,h, Size, Level).
 
 manage_input(4) :-
     repeat,
@@ -70,7 +70,7 @@ manage_input(4) :-
     read_integer(0, Level),
     validate_level(Level),  % backtrack to repeat
     !,  % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('C','C', Size, Level).
+    start_game(c,c, Size, Level).
 
 manage_input(5) :-
     print_instructions,

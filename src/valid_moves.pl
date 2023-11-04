@@ -174,7 +174,7 @@ valid_move(gamestate(Board,2),pawn(Row,Col),coords(NewRow,NewCol), 1):- % (Playe
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves_pawn(GameState, Pawn, ListOfMoves):-
-    findall(Capture-NewCoords, valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
+    findall(move(Pawn, NewCoords, Capture), valid_move_pawn(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 
 /**
  * valid_moves(+GameState, +Player, -ListOfMoves)
@@ -185,5 +185,5 @@ valid_moves_pawn(GameState, Pawn, ListOfMoves):-
  * ListOfMoves - the list of valid moves for the pawn given
  */
 valid_moves(GameState, _Player, ListOfMoves):-
-      bagof(Capture-move(Pawn,NewCoords), valid_move(GameState, Pawn, NewCoords, Capture), ListOfMoves).
+      bagof(move(Pawn, NewCoords, Capture), valid_move(GameState, Pawn, NewCoords, Capture), ListOfMoves).
 

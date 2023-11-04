@@ -1,3 +1,7 @@
+:- dynamic 
+      dynamic_player/2,
+      dynamic_coords/2.
+
 /**
  * change_turn(+GameState,-NewGameState)
  * 
@@ -19,6 +23,13 @@ turn(1, 'GREEN').
 turn(2, 'BLUE').
 
 /**
+ * is_capture(+Move)
+ * 
+ * Check if a move is a capture. (Capture == 1)
+ */
+is_capture(move(_Pawn, _NewCoords, 1)).
+
+/**
  * green_player_turn(+GameState, +Player, +Level, -NewGameState)
  *
  * Handles green player's turn
@@ -30,15 +41,10 @@ handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
       turn(Turn, Color),
       format('\n------------------ PLAYER ~d (~w) -------------------\n\n', [Turn, Color]),
       display_game(gamestate(Board, Turn)),
-      choose_move(gamestate(Board, Turn), Player, Level, Capture-Move),
+      choose_move(gamestate(Board, Turn), Player, Level, Move),
       print_chosen_move(Move),
-      move(gamestate(Board, Turn), Move, MoveGameState),
-      if_then_else(
-            Capture =:= 1,
-            manage_capture(MoveGameState,Player,NewGameState),
-            NewGameState = MoveGameState
-      ).
-
+      move(gamestate(Board, Turn), Move, NewGameState),
+      if_then_else( is_capture(Move), print_capture_coords, true ).
 /**
  * game_over(+GameState, -Winner)
  *
@@ -96,4 +102,7 @@ game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
  */
 start_game(Player1, Player2, Size, Level):-
       initial_state(Size, GameState),
+      retractall(dynamic_player(_,_)),
+      assertz(dynamic_player(1, Player1)),
+      assertz(dynamic_player(2, Player2)),
       game_loop(GameState, Player1, Player2, Level).
