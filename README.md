@@ -8,12 +8,9 @@ Distributed under the terms of the GNU General Public License, version 3
 
 ## License
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
 © 2023 José Miguel Isidro, José António Costa
-
 All files are licensed under GNU General Public License v3, to the exception of:
 - submodules, which are subject to specific licenses
-
 Based the homonymous game by Nestor Romeral Andres and Ken Shoda, publicly available through nestorgames.  
 We lay claim only over the software; this software cannot be used for commercial purposes.  
 Made available under [GNU General Public License v3](LICENSE), copyrighted material used under *fair use for education*.
@@ -64,6 +61,12 @@ To run this game you need a running Prolog environment, preferably [SICStus Prol
 2. Consult `game.pl`, located in the `src` folder;
 3. Call the `play.` predicate without any arguments.
 
+Alternatively, to run the game in a command line:
+```sh
+sicstus -l src/game.pl   
+```
+
+
 ## Description of the game
 
 - **Claustro** is an abstract board game with 3 simple rules (Goal, Move and Capture). The game is played in a square diamond shaped board with the opposing upper corner and lower corner being the green and blue goals, respectively, and the other two opposing left and right corners, being unoccupiable squares.
@@ -72,7 +75,7 @@ To run this game you need a running Prolog environment, preferably [SICStus Prol
   <img width="300" height="300"  src="imgs/claustro_board_original.png" />
 </p>
 
-In order to print the game properly, we decided to turn the board 45 degrees to the left, making it so the board is now a square. The upper-left corner and lower-right corner are the green (G) and blue (B) goals, respectively, and the other two opposing upper-right and lower-left corners, being unoccupiable squares (-).
+- In order to print the game properly, we decided to turn the board 45 degrees to the left, making it so the board is now a square. The upper-left corner and lower-right corner are the green (G) and blue (B) goals, respectively, and the other two opposing upper-right and lower-left corners, being unoccupiable squares (-).
 
 <p align="center">
   <img width="300" height="300" src="imgs/claustro_board.jpg" />
@@ -161,7 +164,7 @@ replaceInBoard([H|T], Row, Col, Value, [H|TNew]) :-
         replaceInBoard(T, Row1, Col, Value, TNew).
 ```
 
-While the it hasn't found the desired Row, it decreases the index and keeps searching for it. When Row is equal to 1, it calls a helper predicate replaceInRow/4.
+While it hasn't found the desired Row, it decreases the index and keeps searching for it. When Row is equal to 1, it calls a helper predicate replaceInRow/4.
 
 ```prolog
 replaceInRow([_H|T], 1, Value, [Value|T]).
@@ -181,7 +184,7 @@ Examples of different Game States representations have been hard-coded and made 
 | intermediateState | `intermediate_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an intermediate state |
 | finalState | `final_state(GameState),game_loop(GameState,P1,P2,Level).` will start the game in an final state |
 
-Note: P1 and P2 are the players, which can 'H' for human or 'C' for computer. In the latter, the user can select levels 1 or 2 in the last parameter of the game_loop/4 predicate.
+Note: P1 and P2 are the players, which can be h for human or c for computer. In the latter, the user can select levels 1 or 2 in the last parameter of the game_loop/4 predicate.
 
 #### Initial State
 
@@ -240,7 +243,7 @@ When the game is initiated, a menu is printed. In this menu, the player can choo
     read_integer(0, Size),
     validate_size(Size),   % backtrack to repeat
     !, % when input is valid, cut!, we won't backtrack to repeat anymore
-    start_game('H','H', Size, _).
+    start_game(h,h, Size, _).
 
   ```
 
@@ -276,7 +279,7 @@ There are also display predicates for the menu, such as:
 
 ### Move Validation and Execution
 
-We decided to approach the movement in 2 separate ways. For the human players, we first let them select a pawn to move and then we print the valid moves for that pawn. On the other hand, the computer will directly choose a valid move from all possible and valid moves. Below you can see the choose_move/4 predicated.
+We decided to approach the movement in two separate ways. For the human players, we first let them select a pawn to move and then we print the valid moves for that pawn. On the other hand, the computer will directly choose a valid move from all possible and valid moves. Below you can see the choose_move/4 predicate.
 
 ```prolog
 choose_move(GameState, h, _Level, Move):- % (HUMAN)
@@ -378,7 +381,7 @@ valid_moves(GameState, _Player, ListOfMoves):-
 
 ### End of game
 
-The game only ends when a Player's piece reaches the Players goal, for example when a `green` piece reaches `greenGoal`. In order to verify this we check the corners of the board correspondant to each Player's goal for the Player's piece. We do this using the `game_over/2` predicate, which takes as an argument the `game_state` and returns the `Winner`. The predicate also prints the "Game Over" message.
+The game only ends when a Player's piece reaches the Player's goal, for example when a `green` piece reaches `greenGoal`. In order to verify this, we check the corners of the board correspondant to each Player's goal for the Player's piece. We do this using the `game_over/2` predicate, which takes as an argument the `game_state` and returns the `Winner`. The predicate also prints the "Game Over" message.
 
 ```prolog
 game_over(gamestate(Board, Winner), Winner):-

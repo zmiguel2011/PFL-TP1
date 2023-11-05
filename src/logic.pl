@@ -18,7 +18,7 @@ change_turn(gamestate(_Board, 2), gamestate(_Board, 1)).
  * 
  * Associate a color to a turn
  * Turn - current turn, 1 or 2
- * Color - the correspondent color, green or blue
+ * Color - the correspondant color, green or blue
  */
 turn(1, 'GREEN').
 turn(2, 'BLUE').
@@ -35,7 +35,7 @@ is_capture(move(_Pawn, _NewCoords, 1)).
  *
  * Handles green player's turn
  * GameState - current gamestate
- * Player - can be either 'H' or 'C', meaning Player and Computer, respectively
+ * Player - can be either h or c, meaning Player and Computer, respectively
  * NewGameState - new gamestate
  */
 handle_turn(gamestate(Board, Turn), Player, Level, NewGameState) :- % (HUMAN)
@@ -75,8 +75,8 @@ checkVictory(Board, 2):- length(Board, Size), is_pawn_blue(Board, Size, Size).
  *
  * Main game function, waits for player to make a move, checks gamestate and changes turn or ends game
  * GameState - current gamestate(Board, Turn)
- * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
- * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
+ * Player1 - can be either h or c, meaning Player and Computer, respectively
+ * Player2 - can be either h or c, meaning Player and Computer, respectively
  */
 game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
       handle_turn(GameState, Player1, Level, SecondGameState),
@@ -96,8 +96,8 @@ game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
  * start_game(+Player1, +Player2, +Size, +Level)
  *
  * Starts the game with the initial state and initiates the game loop.
- * Player1 - can be either 'H' or 'C', meaning Player and Computer, respectively
- * Player2 - can be either 'H' or 'C', meaning Player and Computer, respectively
+ * Player1 - can be either h or c, meaning Player and Computer, respectively
+ * Player2 - can be either h or c, meaning Player and Computer, respectively
  * Size - size of the board (between 5 and 10)
  * Level - level of the computer player (either 1 or 2)
  */

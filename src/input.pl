@@ -24,7 +24,7 @@ manageColumn(Column) :-
  * readRow(-Code)
  *
  * Read a row (letter) from the player.
- * Code - the char code correspondent to the letter row
+ * Code - the char code correspondant to the letter row
  */
 readRow(Code) :-
     nl,
@@ -48,7 +48,7 @@ readColumn(Column) :-
  * validateRow(+RowCode, -RowInt)
  *
  * Validates and converts the row code received into an integer.
- * RowCode - the code correspondent to the ASCII code of the row
+ * RowCode - the code correspondant to the ASCII code of the row
  * RowInt - the integer index of the row
  */
 
