@@ -418,7 +418,7 @@ value_green_pawn(gamestate(Board, _Turn), pawn(Row, Col), Value) :-
 
 ### Computer Plays
 
-In our game, when the Gameplay involves Computer players, Users can select two different skill Levels for the Computer plays. The first Level is based on the predefined `random/3` predicate, so all the plays made by a Computer in this Level will be randomized. The second Level is based on a `greedy` approach, that takes into account all the available pieces and their distance to their respective goal, and returns the one that is `closest`.
+In our game, when the Gameplay involves Computer players, Users can select two different skill levels for the Computer plays. The first level is based on the predefined `random/3` predicate, so all the plays made by a Computer in this Level will be randomized. The second level is based on a `greedy` approach, that takes into account all the available pieces and their distance to their respective goal, and returns the one that is `closest`.
 
 The functions responsible for these move choices are in the `choose_move.pl` file and their definitions can be found below:
 
@@ -436,6 +436,7 @@ The functions responsible for these move choices are in the `choose_move.pl` fil
   ```
 
   The predicate `choose_random_move/2` retrieves a random `Move` tuple from the previous generated list `ValidMoves` using a randomized index (`random/3`) and the previously explained function `getValueFromList/3`.
+  In case of a capture move, the computer chooses a random empty position to place the captured pawn.
 
 - Level 2
   ```prolog
@@ -454,6 +455,8 @@ The functions responsible for these move choices are in the `choose_move.pl` fil
   In the code above, `best_move/4` is the central predicate responsible for selecting the better valued Computer move for "Level 2". In this predicate, `bagof/3` is used to collect `Value-Move`, where `Value` is the Move value and `Move` represents the actual Move combinations from `ListOfMoves`. Additional goals are exectued within the `bagof/3` predicate to check if the Move is a valid one (`member(Move, ListOfMoves)`) and to compute the value of each Move (`get_move_value/3`).
 
   The bottom predicate `get_move_value/3` is used to calculate the Value of a specific Move, using the previously explained predicates `value_green/2` and `value_blue/2` to evaluate a `gamestate` after applying the Move.
+
+  In case of a capture move, the computer chooses the best empty position to place the captured pawn. This choice is made by maximizing the distance between the capturing player's goal and the empty position.
 
 
 

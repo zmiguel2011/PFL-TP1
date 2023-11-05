@@ -1,4 +1,5 @@
 :- dynamic 
+      dynamic_level/1,
       dynamic_player/2,
       dynamic_coords/2.
 
@@ -102,7 +103,10 @@ game_loop(GameState, Player1, Player2, Level) :- % Player 1's Turn
  */
 start_game(Player1, Player2, Size, Level):-
       initial_state(Size, GameState),
+      retractall(dynamic_level(_)),
+      retractall(dynamic_coords(_,_)),
       retractall(dynamic_player(_,_)),
+      assertz(dynamic_level(Level)),
       assertz(dynamic_player(1, Player1)),
       assertz(dynamic_player(2, Player2)),
       game_loop(GameState, Player1, Player2, Level).

@@ -120,7 +120,12 @@ manage_capture(gamestate(Board,Turn), h, gamestate(NewBoard,Turn)):-
 
 manage_capture(gamestate(Board,Turn), c, gamestate(NewBoard,Turn)):-
     color(Turn,Color),
-    choose_random_empty(Board,Row,Col), !,
+    dynamic_level(Level),
+    if_then_else(
+        Level == 2,
+        choose_best_empty(Board, Turn, Row, Col),
+        choose_random_empty(Board, Row, Col)
+    ), !,
     asserta(dynamic_coords(Row, Col)),
     replaceInBoard(Board,Row,Col,Color,NewBoard).
 
@@ -201,3 +206,43 @@ choose_random_empty(Board, Row, Col):-
         true
     ).
 
+/**
+ * choose_best_empty(+Board, +Turn, -Row, -Col)
+ *
+ * Chooses the best (empty) position for the bot to move the captured pawn.
+ * Board - current Board for the game
+ * Turn - the player's turn (1 or 2)
+ * Row - best row
+ * Col - best column
+ */
+choose_best_empty(Board, 1, Row, Col):-
+    aggregate(max(Distance), get_empty_distance_green(Board, Row, Col, Distance), MaxDistance).
+
+choose_best_empty(Board, 2, Row, Col):-
+    aggregate(max(Distance), get_empty_distance_blue(Board, Row, Col, Distance), MaxDistance).
+
+
+/**
+ * get_empty_distance(+Board, -Row, -Col, -Distance)
+ *
+ * Chooses the best (empty) position for the bot to move the captured pawn, for the green player.
+ * Board - current Board for the game
+ * Row - best row
+ * Col - best column
+ */
+get_empty_distance_green(Board, Row, Col, Distance) :-
+    get_empty_pawn(Board, Row, Col),
+    orthogonal_distance(1, 1, Row, Col, Distance).
+
+/**
+ * get_empty_distance(+Board, -Row, -Col, -Distance)
+ *
+ * Chooses the best (empty) position for the bot to move the captured pawn, for the blue player.
+ * Board - current Board for the game
+ * Row - best row
+ * Col - best column
+ */
+get_empty_distance_blue(Board, Row, Col, Distance) :-
+    get_empty_pawn(Board, Row, Col),
+    length(Board, N),
+    orthogonal_distance(N, N, Row, Col, Distance).

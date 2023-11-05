@@ -197,6 +197,18 @@ get_green_pawn(Board, Row, Col) :-
 get_blue_pawn(Board, Row, Col) :-  
       getIndexFromBoard(Board, Row, Col, blue).
 
+
+/**
+ * get_empty_pawn(+Board, -Row, -Col)
+ *
+ * Retrieves a empty pawn from the board
+ * Board - current board
+ * Row - row to search for
+ * Col - col to search for
+ */
+get_empty_pawn(Board, Row, Col) :-  
+      getIndexFromBoard(Board, Row, Col, empty).
+
 /**
  * ignore_newlines
  *
