@@ -1,19 +1,6 @@
-<!--
-(C) 2023 José Miguel Isidro, José António Costa
-Distributed under the terms of the GNU General Public License, version 3
--->
-
 # Claustro
 
-
-## License
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-© 2023 José Miguel Isidro, José António Costa
-All files are licensed under GNU General Public License v3, to the exception of:
-- submodules, which are subject to specific licenses
-Based the homonymous game by Nestor Romeral Andres and Ken Shoda, publicly available through nestorgames.  
-We lay claim only over the software; this software cannot be used for commercial purposes.  
-Made available under [GNU General Public License v3](LICENSE), copyrighted material used under *fair use for education*.
+`A text-based board game made with SISCTUS Prolog.`
 
 ## Index 
 
