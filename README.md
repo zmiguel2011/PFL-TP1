@@ -36,6 +36,7 @@
     - José Miguel Moreira Isidro: 67%
     - José António Santos Costa: 33%
 
+- [Project Assignment](Assignment.pdf)
 
 ## Installation and Execution
 
