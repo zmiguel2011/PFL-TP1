@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/PFL-TP1/static/css/main.e60c8857.css",
+    "main.css": "/PFL-TP1/static/css/main.82a5e35f.css",
     "main.js": "/PFL-TP1/static/js/main.7daca54c.js",
     "static/js/787.210309ab.chunk.js": "/PFL-TP1/static/js/787.210309ab.chunk.js",
     "static/media/banner-bg-white.png": "/PFL-TP1/static/media/banner-bg-white.7a65d67419c40058d58d.png",
@@ -28,12 +28,12 @@
     "static/media/code-icon.svg": "/PFL-TP1/static/media/code-icon.2e88e78e4aca08959c0999e44c1dfb33.svg",
     "static/media/linkedin-icon.svg": "/PFL-TP1/static/media/linkedin-icon.721d5414c26365f117e71d46b6641cb2.svg",
     "static/media/mail-icon.svg": "/PFL-TP1/static/media/mail-icon.129a9bb6f39d8d3278c84d7f8bb6a114.svg",
-    "main.e60c8857.css.map": "/PFL-TP1/static/css/main.e60c8857.css.map",
+    "main.82a5e35f.css.map": "/PFL-TP1/static/css/main.82a5e35f.css.map",
     "main.7daca54c.js.map": "/PFL-TP1/static/js/main.7daca54c.js.map",
     "787.210309ab.chunk.js.map": "/PFL-TP1/static/js/787.210309ab.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e60c8857.css",
+    "static/css/main.82a5e35f.css",
     "static/js/main.7daca54c.js"
   ]
 }
